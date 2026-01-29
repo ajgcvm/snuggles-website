@@ -1,0 +1,471 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { Image } from 'astro:assets'
+import heroImage from '../assets/images/doc_rolling.jpg'
+import dogWater from '../assets/images/profile_pic.jpg'
+---
+
+<Layout title="Snuggles Pet Boarding | Melbourne, FL">
+  <!-- Header -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm border-b border-stone-200">
+    <nav class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="/" class="text-xl font-bold text-primary-700">
+        Snuggles Pet Boarding
+      </a>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#services" class="text-stone-600 hover:text-primary-700 transition-colors">Services</a>
+        <a href="#why-us" class="text-stone-600 hover:text-primary-700 transition-colors">Why Us</a>
+        <a href="#gallery" class="text-stone-600 hover:text-primary-700 transition-colors">Gallery</a>
+        <a href="#about" class="text-stone-600 hover:text-primary-700 transition-colors">About</a>
+        <a href="#contact" class="bg-primary-600 text-white px-5 py-2 rounded-full hover:bg-primary-700 transition-colors font-medium">
+          Book Now
+        </a>
+      </div>
+      <!-- Mobile menu button -->
+      <button id="mobile-menu-btn" class="md:hidden p-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </nav>
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-stone-200">
+      <div class="px-4 py-4 space-y-4">
+        <a href="#services" class="block text-stone-600 hover:text-primary-700">Services</a>
+        <a href="#why-us" class="block text-stone-600 hover:text-primary-700">Why Us</a>
+        <a href="#gallery" class="block text-stone-600 hover:text-primary-700">Gallery</a>
+        <a href="#about" class="block text-stone-600 hover:text-primary-700">About</a>
+        <a href="#contact" class="block bg-primary-600 text-white px-5 py-2 rounded-full text-center font-medium">Book Now</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <Image
+        src={heroImage}
+        alt="Happy dog rolling in grass at Snuggles Pet Boarding farm"
+        class="absolute inset-0 w-full h-full object-cover"
+        widths={[640, 1024, 1920]}
+        sizes="100vw"
+      />
+      <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50"></div>
+      <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
+        <h1 class="font-serif text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 drop-shadow-lg">
+          Where Pets Roam Free
+        </h1>
+        <p class="text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto drop-shadow">
+          Not a kennel. A farm vacation for your furry family.
+          Dogs, cats, and birds welcome.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="#contact" class="bg-primary-500 hover:bg-primary-600 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all hover:scale-105 shadow-lg">
+            Schedule a Meet & Greet
+          </a>
+          <a href="#services" class="bg-white/20 hover:bg-white/30 backdrop-blur text-white px-8 py-4 rounded-full text-lg font-semibold transition-all border border-white/30">
+            View Services
+          </a>
+        </div>
+      </div>
+      <!-- Scroll indicator -->
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <svg class="w-8 h-8 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-20 md:py-28 bg-white">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="text-center mb-16">
+          <h2 class="font-serif text-3xl md:text-4xl font-bold text-stone-800 mb-4">Our Services</h2>
+          <p class="text-lg text-stone-600 max-w-2xl mx-auto">
+            Whether you're traveling for a week or just need a day of fun for your pet, we've got you covered.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+          <!-- Boarding -->
+          <div class="bg-stone-50 rounded-2xl p-8 border border-stone-200 hover:border-primary-300 transition-colors">
+            <div class="w-14 h-14 bg-primary-100 rounded-xl flex items-center justify-center mb-6">
+              <svg class="w-7 h-7 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+              </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-stone-800 mb-3">Overnight Boarding</h3>
+            <p class="text-stone-600 mb-6">
+              Your pet stays with us while you travel. They'll enjoy spacious outdoor areas,
+              play with new friends, and receive daily photo updates so you never miss a moment.
+            </p>
+            <div class="flex items-baseline gap-2 mb-4">
+              <span class="text-3xl font-bold text-primary-700">$XX</span>
+              <span class="text-stone-500">/ night</span>
+            </div>
+            <ul class="space-y-2 text-stone-600">
+              <li class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Outdoor farm experience
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Daily photo updates
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Personalized attention
+              </li>
+            </ul>
+          </div>
+
+          <!-- Daycare -->
+          <div class="bg-stone-50 rounded-2xl p-8 border border-stone-200 hover:border-primary-300 transition-colors">
+            <div class="w-14 h-14 bg-accent-100 rounded-xl flex items-center justify-center mb-6">
+              <svg class="w-7 h-7 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+              </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-stone-800 mb-3">Day Care</h3>
+            <p class="text-stone-600 mb-6">
+              Drop off in the morning, pick up after work. Perfect for busy pet parents
+              who want their furry friends to have fun while they're away.
+            </p>
+            <div class="flex items-baseline gap-2 mb-4">
+              <span class="text-3xl font-bold text-primary-700">$XX</span>
+              <span class="text-stone-500">/ day</span>
+            </div>
+            <ul class="space-y-2 text-stone-600">
+              <li class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                9am - 5pm
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Socialization with other pets
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Exercise & playtime
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="text-center mt-8 text-stone-500">
+          Multi-pet discounts available. Contact us for holiday and extended stay rates.
+        </p>
+      </div>
+    </section>
+
+    <!-- Why Us Section -->
+    <section id="why-us" class="py-20 md:py-28 bg-primary-50">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="text-center mb-16">
+          <h2 class="font-serif text-3xl md:text-4xl font-bold text-stone-800 mb-4">Why Snuggles?</h2>
+          <p class="text-lg text-stone-600 max-w-2xl mx-auto">
+            We're not your typical boarding facility. Here's what makes us different.
+          </p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Farm Environment -->
+          <div class="bg-white rounded-xl p-6 text-center shadow-sm">
+            <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+              </svg>
+            </div>
+            <h3 class="font-bold text-lg text-stone-800 mb-2">Farm Experience</h3>
+            <p class="text-stone-600 text-sm">
+              Open fields, fresh air, and room to run. No cages, no kennels - just nature.
+            </p>
+          </div>
+
+          <!-- All Pets Welcome -->
+          <div class="bg-white rounded-xl p-6 text-center shadow-sm">
+            <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+              </svg>
+            </div>
+            <h3 class="font-bold text-lg text-stone-800 mb-2">All Pets Welcome</h3>
+            <p class="text-stone-600 text-sm">
+              Dogs, cats, birds, and more. Bring the whole family - we'll take care of everyone.
+            </p>
+          </div>
+
+          <!-- Daily Updates -->
+          <div class="bg-white rounded-xl p-6 text-center shadow-sm">
+            <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+            <h3 class="font-bold text-lg text-stone-800 mb-2">Daily Updates</h3>
+            <p class="text-stone-600 text-sm">
+              Photos and updates every day. You'll never wonder how your pet is doing.
+            </p>
+          </div>
+
+          <!-- Family Owned -->
+          <div class="bg-white rounded-xl p-6 text-center shadow-sm">
+            <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+              </svg>
+            </div>
+            <h3 class="font-bold text-lg text-stone-800 mb-2">Family Owned</h3>
+            <p class="text-stone-600 text-sm">
+              Personal attention from people who truly love animals. Your pet becomes part of our family.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="py-20 md:py-28 bg-white">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="text-center mb-16">
+          <h2 class="font-serif text-3xl md:text-4xl font-bold text-stone-800 mb-4">Happy Guests</h2>
+          <p class="text-lg text-stone-600 max-w-2xl mx-auto">
+            See what a day at Snuggles looks like.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div class="aspect-square overflow-hidden rounded-xl">
+            <Image
+              src={heroImage}
+              alt="Dog enjoying the farm"
+              class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+              widths={[400, 600]}
+              sizes="(max-width: 768px) 50vw, 33vw"
+            />
+          </div>
+          <div class="aspect-square overflow-hidden rounded-xl">
+            <Image
+              src={dogWater}
+              alt="Dog playing in water"
+              class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+              widths={[400, 600]}
+              sizes="(max-width: 768px) 50vw, 33vw"
+            />
+          </div>
+          <!-- Placeholder for more photos -->
+          <div class="aspect-square overflow-hidden rounded-xl bg-stone-100 flex items-center justify-center">
+            <div class="text-center text-stone-400 p-4">
+              <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              <span class="text-sm">More photos coming soon</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center mt-8">
+          <a href="https://instagram.com/snugglespetboarding" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+            Follow us on Instagram
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 md:py-28 bg-stone-100">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <h2 class="font-serif text-3xl md:text-4xl font-bold text-stone-800 mb-6">About Snuggles</h2>
+            <div class="space-y-4 text-stone-600">
+              <p>
+                Located on a beautiful farm in Melbourne, Florida, Snuggles Pet Boarding
+                was born from a simple belief: pets deserve better than traditional kennels.
+              </p>
+              <p>
+                Here, your furry (or feathered!) family members get to experience life on a real farm.
+                They'll explore open fields, make new friends, and enjoy the kind of freedom
+                that only nature can provide.
+              </p>
+              <p>
+                We're not just pet sitters - we're animal lovers who treat every guest
+                like part of our own family. From daily photo updates to personalized care,
+                we go above and beyond to make sure your pet has the time of their life.
+              </p>
+            </div>
+          </div>
+          <div class="relative">
+            <div class="aspect-[4/3] rounded-2xl overflow-hidden">
+              <Image
+                src={dogWater}
+                alt="Happy dog at Snuggles"
+                class="w-full h-full object-cover"
+                widths={[400, 600, 800]}
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+            <div class="absolute -bottom-6 -left-6 bg-primary-500 text-white px-6 py-4 rounded-xl shadow-lg">
+              <div class="text-3xl font-bold">5+</div>
+              <div class="text-sm">Years of Experience</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 md:py-28 bg-white">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="text-center mb-16">
+          <h2 class="font-serif text-3xl md:text-4xl font-bold text-stone-800 mb-4">Get In Touch</h2>
+          <p class="text-lg text-stone-600 max-w-2xl mx-auto">
+            Ready to give your pet the farm vacation they deserve?
+            Schedule a meet & greet or send us a message.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-12">
+          <!-- Contact Info -->
+          <div class="space-y-8">
+            <div>
+              <h3 class="font-bold text-lg text-stone-800 mb-4">Contact Information</h3>
+              <div class="space-y-4">
+                <a href="tel:+1XXXXXXXXXX" class="flex items-center gap-3 text-stone-600 hover:text-primary-600 transition-colors">
+                  <div class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                    </svg>
+                  </div>
+                  <span>(XXX) XXX-XXXX</span>
+                </a>
+                <a href="mailto:hello@snugglespetboarding.com" class="flex items-center gap-3 text-stone-600 hover:text-primary-600 transition-colors">
+                  <div class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                  </div>
+                  <span>hello@snugglespetboarding.com</span>
+                </a>
+                <div class="flex items-center gap-3 text-stone-600">
+                  <div class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                  </div>
+                  <span>Melbourne, FL 32934</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="font-bold text-lg text-stone-800 mb-4">Hours</h3>
+              <div class="space-y-2 text-stone-600">
+                <div class="flex justify-between">
+                  <span>Drop-off</span>
+                  <span>8:00 AM - 10:00 AM</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Pick-up</span>
+                  <span>4:00 PM - 6:00 PM</span>
+                </div>
+                <p class="text-sm text-stone-500 mt-2">
+                  Flexible times available upon request
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="font-bold text-lg text-stone-800 mb-4">Follow Us</h3>
+              <div class="flex gap-4">
+                <a href="https://instagram.com/snugglespetboarding" target="_blank" rel="noopener" class="w-10 h-10 bg-stone-100 hover:bg-primary-100 rounded-full flex items-center justify-center transition-colors">
+                  <svg class="w-5 h-5 text-stone-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Map Placeholder -->
+          <div class="bg-stone-100 rounded-2xl overflow-hidden min-h-[400px] flex items-center justify-center">
+            <div class="text-center text-stone-400 p-8">
+              <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+              </svg>
+              <p class="text-lg font-medium mb-2">Map Coming Soon</p>
+              <p class="text-sm">Melbourne, FL 32934</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-stone-800 text-stone-300 py-12">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="grid md:grid-cols-3 gap-8 mb-8">
+        <div>
+          <h3 class="text-white font-bold text-lg mb-4">Snuggles Pet Boarding</h3>
+          <p class="text-sm">
+            Where pets roam free. Family-owned pet boarding
+            in Melbourne, Florida.
+          </p>
+        </div>
+        <div>
+          <h3 class="text-white font-bold text-lg mb-4">Quick Links</h3>
+          <div class="space-y-2">
+            <a href="#services" class="block text-sm hover:text-white transition-colors">Services</a>
+            <a href="#about" class="block text-sm hover:text-white transition-colors">About Us</a>
+            <a href="#contact" class="block text-sm hover:text-white transition-colors">Contact</a>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-white font-bold text-lg mb-4">Location</h3>
+          <p class="text-sm">
+            Melbourne, FL 32934<br>
+            Brevard County, Florida
+          </p>
+        </div>
+      </div>
+      <div class="border-t border-stone-700 pt-8 text-center text-sm">
+        <p>&copy; {new Date().getFullYear()} Snuggles Pet Boarding. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    const menuBtn = document.getElementById('mobile-menu-btn')
+    const mobileMenu = document.getElementById('mobile-menu')
+
+    menuBtn?.addEventListener('click', () => {
+      mobileMenu?.classList.toggle('hidden')
+    })
+
+    // Close mobile menu when clicking a link
+    mobileMenu?.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu?.classList.add('hidden')
+      })
+    })
+  </script>
+</Layout>
