@@ -1,43 +1,57 @@
-# Astro Starter Kit: Minimal
+# Snuggles Pet Boarding - Website
 
-```sh
-npm create astro@latest -- --template minimal
+Site institucional para Snuggles Pet Boarding (Melbourne, FL).
+
+## URLs
+
+| Ambiente | URL |
+|----------|-----|
+| Produção | https://snugglespetboarding.com |
+| Pages Dev | https://snuggles-website.pages.dev |
+
+## Stack
+
+- Astro 5.x + Tailwind CSS 4.x
+- Cloudflare Pages (hospedagem)
+- Cloudflare Registrar (domínio)
+
+## Desenvolvimento
+
+```bash
+npm install
+npm run dev     # http://localhost:4321
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Deploy
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```bash
+npm run build
+npx wrangler pages deploy dist --project-name snuggles-website
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Estrutura
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+```
+src/
+├── assets/images/   # Fotos
+├── layouts/         # Layout.astro
+├── pages/           # index.astro (single page)
+└── styles/          # global.css (Tailwind)
+```
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Seções do Site
 
-## 🧞 Commands
+- Hero (foto + CTA)
+- Services (Boarding, Daycare)
+- Why Us (diferenciais)
+- Gallery
+- About
+- Contact
 
-All commands are run from the root of the project, from a terminal:
+## Pendente
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- [ ] Preços reais
+- [ ] Telefone
+- [ ] Endereço completo
+- [ ] Mais fotos
+- [ ] Horários corretos
