@@ -145,6 +145,8 @@ const API_URL = 'https://denboard-booking-api.felhen.workers.dev'
 <script define:vars={{ API_URL }}>
   let authHeader = '';
   let currentBookings = [];
+  let availableSpots = [];
+  let calendlyEventTypes = [];
 
   // Check for saved auth
   document.addEventListener('DOMContentLoaded', () => {
@@ -207,6 +209,32 @@ const API_URL = 'https://denboard-booking-api.felhen.workers.dev'
     document.getElementById('admin-dashboard').classList.remove('hidden');
     loadStats();
     loadBookings();
+    loadSpots();
+    loadCalendlyEventTypes();
+  }
+
+  async function loadSpots() {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/spots`, {
+        headers: { 'Authorization': authHeader }
+      });
+      const data = await response.json();
+      availableSpots = data.spots || [];
+    } catch (error) {
+      console.error('Error loading spots:', error);
+    }
+  }
+
+  async function loadCalendlyEventTypes() {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/calendly/event-types`, {
+        headers: { 'Authorization': authHeader }
+      });
+      const data = await response.json();
+      calendlyEventTypes = data.eventTypes || [];
+    } catch (error) {
+      console.error('Error loading Calendly event types:', error);
+    }
   }
 
   async function loadStats() {
@@ -346,26 +374,41 @@ const API_URL = 'https://denboard-booking-api.felhen.workers.dev'
 
         <!-- Pets -->
         <div>
-          <h3 class="font-medium text-stone-800 mb-3">Pets</h3>
+          <h3 class="font-medium text-stone-800 mb-3">Pets & Spot Assignment</h3>
           <div class="space-y-3">
-            ${pets.map(pet => `
+            ${pets.map(pet => {
+              const compatibleSpots = getCompatibleSpots(pet.suggested_size);
+              return `
               <div class="bg-stone-50 rounded-lg p-4">
-                <div class="flex items-center justify-between">
-                  <div>
+                <div class="flex items-start justify-between gap-4">
+                  <div class="flex-1">
                     <p class="font-medium text-stone-800">${pet.name}</p>
                     <p class="text-sm text-stone-600">${pet.type === 'dog' ? `${pet.breed}, ${pet.weight} lbs` : pet.type}</p>
-                    ${pet.is_puppy ? '<span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded">Puppy</span>' : ''}
-                    ${pet.needs_medication ? '<span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded ml-1">Medication</span>' : ''}
+                    <div class="flex gap-1 mt-1">
+                      ${pet.is_puppy ? '<span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded">Puppy</span>' : ''}
+                      ${pet.needs_medication ? '<span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Medication</span>' : ''}
+                      <span class="text-xs bg-stone-200 text-stone-600 px-2 py-0.5 rounded">${pet.suggested_size}</span>
+                    </div>
                   </div>
                   <div class="text-right">
-                    <p class="text-sm text-stone-500">Suggested: ${pet.suggested_size}</p>
-                    <p class="text-sm text-stone-500">Assigned: ${pet.assigned_spot_id || 'Not assigned'}</p>
+                    <label class="text-xs text-stone-500 block mb-1">Assign Spot</label>
+                    <select
+                      onchange="assignSpot('${pet.id}', this.value, '${booking.check_in}', '${booking.check_out}')"
+                      class="px-2 py-1 border border-stone-300 rounded text-sm min-w-[140px]"
+                    >
+                      <option value="">Not assigned</option>
+                      ${compatibleSpots.map(spot => `
+                        <option value="${spot.id}" ${pet.assigned_spot_id === spot.id ? 'selected' : ''}>
+                          ${spot.name} (${spot.size})
+                        </option>
+                      `).join('')}
+                    </select>
                   </div>
                 </div>
                 ${pet.special_needs ? `<p class="text-sm text-stone-500 mt-2">Notes: ${pet.special_needs}</p>` : ''}
                 ${pet.medication_notes ? `<p class="text-sm text-blue-600 mt-1">Medication: ${pet.medication_notes}</p>` : ''}
               </div>
-            `).join('')}
+            `}).join('')}
           </div>
         </div>
 
@@ -376,11 +419,37 @@ const API_URL = 'https://denboard-booking-api.felhen.workers.dev'
           <button onclick="updateNotes('${booking.id}')" class="mt-2 text-sm text-primary-600 hover:text-primary-700 font-medium">Save Notes</button>
         </div>
 
+        <!-- Meet & Greet -->
+        ${booking.requires_meet_greet ? `
+        <div class="bg-amber-50 rounded-lg p-4 border border-amber-200">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-medium text-amber-800">Meet & Greet Required</h3>
+              <p class="text-sm text-amber-600">
+                ${booking.meet_greet_scheduled
+                  ? `Scheduled: ${new Date(booking.meet_greet_scheduled).toLocaleString()}`
+                  : 'Not yet scheduled'}
+              </p>
+            </div>
+            ${!booking.meet_greet_scheduled ? `
+              <button onclick="scheduleMeetGreet('${booking.id}', '${booking.client_email}', '${booking.client_name}')" class="px-3 py-1 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700">
+                Send Calendly Link
+              </button>
+            ` : `
+              ${!booking.meet_greet_completed ? `
+                <button onclick="markMeetGreetComplete('${booking.id}')" class="px-3 py-1 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700">
+                  Mark Completed
+                </button>
+              ` : '<span class="text-green-600 font-medium">Completed</span>'}
+            `}
+          </div>
+        </div>
+        ` : ''}
+
         <!-- Metadata -->
         <div class="text-xs text-stone-400 border-t border-stone-200 pt-4">
           <p>Created: ${new Date(booking.created_at).toLocaleString()}</p>
           <p>Source: ${booking.source}</p>
-          ${booking.requires_meet_greet ? '<p class="text-amber-600">Meet & Greet Required</p>' : ''}
         </div>
       </div>
     `;
@@ -436,6 +505,109 @@ const API_URL = 'https://denboard-booking-api.felhen.workers.dev'
       });
     } catch (error) {
       console.error('Error updating notes:', error);
+    }
+  }
+
+  function getCompatibleSpots(suggestedSize) {
+    // Size hierarchy: mini < small < medium < large < super_large
+    const sizeOrder = ['mini', 'small', 'medium', 'large', 'super_large', 'puppy'];
+    const sizeIndex = sizeOrder.indexOf(suggestedSize);
+
+    // Can use same size or larger (except puppy which is separate)
+    return availableSpots.filter(spot => {
+      if (suggestedSize === 'puppy') return spot.size === 'puppy';
+      if (spot.size === 'puppy') return false;
+      const spotIndex = sizeOrder.indexOf(spot.size);
+      return spotIndex >= sizeIndex;
+    });
+  }
+
+  window.assignSpot = async function(petId, spotId, checkIn, checkOut) {
+    if (!spotId) return;
+
+    // Generate dates array between check-in and check-out
+    const dates = [];
+    const start = new Date(checkIn);
+    const end = new Date(checkOut);
+    for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
+      dates.push(d.toISOString().split('T')[0]);
+    }
+
+    try {
+      await fetch(`${API_URL}/api/admin/allocate`, {
+        method: 'POST',
+        headers: {
+          'Authorization': authHeader,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ petId, spotId, dates })
+      });
+      // Reload to show updated assignment
+      loadBookings();
+    } catch (error) {
+      console.error('Error assigning spot:', error);
+      alert('Failed to assign spot');
+    }
+  }
+
+  window.scheduleMeetGreet = async function(bookingId, clientEmail, clientName) {
+    if (calendlyEventTypes.length === 0) {
+      alert('No Calendly event types available. Please configure Calendly.');
+      return;
+    }
+
+    // Use first event type (Meet & Greet)
+    const eventType = calendlyEventTypes[0];
+
+    try {
+      const response = await fetch(`${API_URL}/api/admin/calendly/schedule`, {
+        method: 'POST',
+        headers: {
+          'Authorization': authHeader,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          bookingId,
+          eventTypeUri: eventType.uri,
+          inviteeEmail: clientEmail,
+          inviteeName: clientName
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.schedulingUrl) {
+        // Copy to clipboard and show message
+        navigator.clipboard.writeText(data.schedulingUrl);
+        alert(`Scheduling link copied to clipboard!\n\nSend this link to the client:\n${data.schedulingUrl}`);
+      } else {
+        alert('Failed to create scheduling link');
+      }
+    } catch (error) {
+      console.error('Error scheduling meet & greet:', error);
+      alert('Failed to create scheduling link');
+    }
+  }
+
+  window.markMeetGreetComplete = async function(bookingId) {
+    try {
+      await fetch(`${API_URL}/api/admin/bookings/${bookingId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': authHeader,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ meet_greet_completed: true })
+      });
+      loadBookings();
+      // Refresh modal
+      const booking = currentBookings.find(b => b.id === bookingId);
+      if (booking) {
+        booking.meet_greet_completed = 1;
+        viewBooking(bookingId);
+      }
+    } catch (error) {
+      console.error('Error marking meet & greet complete:', error);
     }
   }
 
