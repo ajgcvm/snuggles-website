@@ -1,0 +1,229 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { Image } from 'astro:assets'
+import logoIcon from '../assets/images/logo-expanded.svg'
+
+// Import all gallery images
+import img1 from '../assets/images/dogs-running-trail.jpg'
+import img2 from '../assets/images/poodle-puppy.jpg'
+import img3 from '../assets/images/pointers-running.jpg'
+import img4 from '../assets/images/pomeranian-black.jpg'
+import img5 from '../assets/images/labrador-ball.jpg'
+import img6 from '../assets/images/bulldog-smiling.jpg'
+import img7 from '../assets/images/bulldog-sitting.jpg'
+import img8 from '../assets/images/chihuahua-bed.jpg'
+import img9 from '../assets/images/yorkie-indoor.jpg'
+import img10 from '../assets/images/poodle-garden.jpg'
+import img11 from '../assets/images/shepherd-frisbee.jpg'
+import img12 from '../assets/images/shepherd-water.jpg'
+import img13 from '../assets/images/shih-tzu-grass.jpg'
+import img14 from '../assets/images/golden-water-collage.jpg'
+import img15 from '../assets/images/dog-porch.jpg'
+import img16 from '../assets/images/two-dogs-sitting.jpg'
+import img17 from '../assets/images/dog-06.jpg'
+import img18 from '../assets/images/dog-07.jpg'
+import img19 from '../assets/images/dog-08.jpg'
+import img20 from '../assets/images/dog-09.jpg'
+import img21 from '../assets/images/dog-10.jpg'
+import img22 from '../assets/images/dog-11.jpg'
+import img23 from '../assets/images/dog-12.jpg'
+import img24 from '../assets/images/dog-13.jpg'
+import img25 from '../assets/images/dog-14.jpg'
+import img26 from '../assets/images/dog-15.jpg'
+import img27 from '../assets/images/dog-16.jpg'
+import img28 from '../assets/images/dog-17.jpg'
+import img29 from '../assets/images/dog-18.jpg'
+import img30 from '../assets/images/dog-19.jpg'
+import img31 from '../assets/images/dog-20.jpg'
+import img32 from '../assets/images/dog-21.jpg'
+import img33 from '../assets/images/dog-22.jpg'
+import img34 from '../assets/images/dog-23.jpg'
+import img35 from '../assets/images/dog-24.jpg'
+import img36 from '../assets/images/dog-25.jpg'
+import img37 from '../assets/images/dog-26.jpg'
+import img38 from '../assets/images/dog-27.jpg'
+import img39 from '../assets/images/dog-28.jpg'
+import img40 from '../assets/images/dog-29.jpg'
+
+const galleryImages = [
+  { src: img1, alt: "Two happy dogs running on farm trail" },
+  { src: img2, alt: "Cute poodle puppy on the grass" },
+  { src: img3, alt: "Two pointer dogs running together" },
+  { src: img4, alt: "Black pomeranian enjoying the outdoors" },
+  { src: img5, alt: "Labrador playing with ball at sunset" },
+  { src: img6, alt: "Happy bulldog smiling by the pond" },
+  { src: img7, alt: "Bulldog sitting peacefully" },
+  { src: img8, alt: "Chihuahua relaxing in bed" },
+  { src: img9, alt: "Yorkshire terrier indoors" },
+  { src: img10, alt: "Poodle in the garden" },
+  { src: img11, alt: "German shepherd catching frisbee" },
+  { src: img12, alt: "German shepherd playing in water" },
+  { src: img13, alt: "Shih Tzu on the grass" },
+  { src: img14, alt: "Golden retriever enjoying water" },
+  { src: img15, alt: "Dog relaxing on the porch" },
+  { src: img16, alt: "Two dogs sitting together" },
+  { src: img17, alt: "Happy guest at Snuggles" },
+  { src: img18, alt: "Happy guest at Snuggles" },
+  { src: img19, alt: "Happy guest at Snuggles" },
+  { src: img20, alt: "Happy guest at Snuggles" },
+  { src: img21, alt: "Happy guest at Snuggles" },
+  { src: img22, alt: "Happy guest at Snuggles" },
+  { src: img23, alt: "Happy guest at Snuggles" },
+  { src: img24, alt: "Happy guest at Snuggles" },
+  { src: img25, alt: "Happy guest at Snuggles" },
+  { src: img26, alt: "Happy guest at Snuggles" },
+  { src: img27, alt: "Happy guest at Snuggles" },
+  { src: img28, alt: "Happy guest at Snuggles" },
+  { src: img29, alt: "Happy guest at Snuggles" },
+  { src: img30, alt: "Happy guest at Snuggles" },
+  { src: img31, alt: "Happy guest at Snuggles" },
+  { src: img32, alt: "Happy guest at Snuggles" },
+  { src: img33, alt: "Happy guest at Snuggles" },
+  { src: img34, alt: "Happy guest at Snuggles" },
+  { src: img35, alt: "Happy guest at Snuggles" },
+  { src: img36, alt: "Happy guest at Snuggles" },
+  { src: img37, alt: "Happy guest at Snuggles" },
+  { src: img38, alt: "Happy guest at Snuggles" },
+  { src: img39, alt: "Happy guest at Snuggles" },
+  { src: img40, alt: "Happy guest at Snuggles" },
+]
+---
+
+<Layout title="Photo Gallery | Snuggles Pet Boarding" description="See our happy guests enjoying farm life at Snuggles Pet Boarding in Melbourne, FL. Dogs running, playing, and living their best lives.">
+  <!-- Header -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm border-b border-stone-200">
+    <nav class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3">
+        <img src={logoIcon.src} alt="Snuggles Pet Boarding" class="w-12 h-12" />
+        <span class="text-xl font-bold text-primary-700">Snuggles Pet Boarding</span>
+      </a>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="/#services" class="text-stone-600 hover:text-primary-700 transition-colors">Services</a>
+        <a href="/#why-us" class="text-stone-600 hover:text-primary-700 transition-colors">Why Us</a>
+        <a href="/#gallery" class="text-stone-600 hover:text-primary-700 transition-colors">Gallery</a>
+        <a href="/#about" class="text-stone-600 hover:text-primary-700 transition-colors">About</a>
+        <a href="/prepare" class="text-stone-600 hover:text-primary-700 transition-colors">Prepare</a>
+        <a href="https://www.rover.com/members/anna-c-pet-boarding-and-daycare/" target="_blank" rel="noopener" class="bg-primary-600 text-white px-5 py-2 rounded-full hover:bg-primary-700 transition-colors font-medium">
+          Book Now
+        </a>
+      </div>
+      <!-- Mobile menu button -->
+      <button id="mobile-menu-btn" class="md:hidden p-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </nav>
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-stone-200">
+      <div class="px-4 py-4 space-y-4">
+        <a href="/#services" class="block text-stone-600 hover:text-primary-700">Services</a>
+        <a href="/#why-us" class="block text-stone-600 hover:text-primary-700">Why Us</a>
+        <a href="/#gallery" class="block text-stone-600 hover:text-primary-700">Gallery</a>
+        <a href="/#about" class="block text-stone-600 hover:text-primary-700">About</a>
+        <a href="/prepare" class="block text-stone-600 hover:text-primary-700">Prepare</a>
+        <a href="https://www.rover.com/members/anna-c-pet-boarding-and-daycare/" target="_blank" rel="noopener" class="block bg-primary-600 text-white px-5 py-2 rounded-full text-center font-medium">Book Now</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="pt-24 pb-16">
+    <!-- Hero -->
+    <section class="bg-primary-50 py-12 mb-12">
+      <div class="max-w-6xl mx-auto px-4 text-center">
+        <h1 class="font-serif text-3xl md:text-4xl font-bold text-stone-800 mb-4">Photo Gallery</h1>
+        <p class="text-lg text-stone-600 max-w-2xl mx-auto">
+          See what a stay at Snuggles looks like. Our guests enjoy open fields,
+          trail walks, water play, and plenty of new friends.
+        </p>
+      </div>
+    </section>
+
+    <!-- Gallery Grid -->
+    <section class="max-w-6xl mx-auto px-4">
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+        {galleryImages.map((image, index) => (
+          <div class="aspect-square overflow-hidden rounded-xl bg-stone-100">
+            <Image
+              src={image.src}
+              alt={image.alt}
+              class="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
+              widths={[300, 400, 500]}
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              loading={index < 8 ? "eager" : "lazy"}
+            />
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="max-w-4xl mx-auto px-4 mt-16 text-center">
+      <div class="bg-primary-600 text-white rounded-2xl p-8 md:p-12">
+        <h2 class="font-serif text-2xl md:text-3xl font-bold mb-4">Ready for Your Pet's Farm Vacation?</h2>
+        <p class="text-primary-100 mb-8">
+          Your furry friend could be our next happy guest. Book a stay or schedule a meet & greet.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="https://www.rover.com/members/anna-c-pet-boarding-and-daycare/" target="_blank" rel="noopener" class="bg-white text-primary-700 px-8 py-4 rounded-full text-lg font-semibold transition-all hover:scale-105 shadow-lg">
+            Book on Rover
+          </a>
+          <a href="https://calendly.com/snugglespetboarding" target="_blank" rel="noopener" class="bg-primary-700 hover:bg-primary-800 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all border border-primary-500">
+            Schedule Meet & Greet
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-stone-800 text-stone-300 py-12">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="grid md:grid-cols-3 gap-8 mb-8">
+        <div>
+          <h3 class="text-white font-bold text-lg mb-4">Snuggles Pet Boarding</h3>
+          <p class="text-sm">
+            Where pets roam free. Family-owned pet boarding
+            in Melbourne, Florida.
+          </p>
+        </div>
+        <div>
+          <h3 class="text-white font-bold text-lg mb-4">Quick Links</h3>
+          <div class="space-y-2">
+            <a href="/#services" class="block text-sm hover:text-white transition-colors">Services</a>
+            <a href="/#about" class="block text-sm hover:text-white transition-colors">About Us</a>
+            <a href="/#contact" class="block text-sm hover:text-white transition-colors">Contact</a>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-white font-bold text-lg mb-4">Location</h3>
+          <p class="text-sm">
+            4253 Pinewood Rd<br>
+            Melbourne, FL<br>
+            <a href="tel:+19549077750" class="hover:text-white">(954) 907-7750</a>
+          </p>
+        </div>
+      </div>
+      <div class="border-t border-stone-700 pt-8 text-center text-sm">
+        <p>&copy; {new Date().getFullYear()} Snuggles Pet Boarding. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    const menuBtn = document.getElementById('mobile-menu-btn')
+    const mobileMenu = document.getElementById('mobile-menu')
+
+    menuBtn?.addEventListener('click', () => {
+      mobileMenu?.classList.toggle('hidden')
+    })
+
+    // Close mobile menu when clicking a link
+    mobileMenu?.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu?.classList.add('hidden')
+      })
+    })
+  </script>
+</Layout>
