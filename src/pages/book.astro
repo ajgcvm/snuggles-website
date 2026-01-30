@@ -1,0 +1,928 @@
+---
+import Layout from '../layouts/Layout.astro'
+import logoIcon from '../assets/images/logo-expanded.svg'
+
+const API_URL = 'https://denboard-booking-api.felhen.workers.dev'
+---
+
+<Layout title="Book Your Stay | Snuggles Pet Boarding">
+  <!-- Header -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm border-b border-stone-200">
+    <nav class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3">
+        <img src={logoIcon.src} alt="Snuggles Pet Boarding" class="w-12 h-12" />
+        <span class="text-xl font-bold text-primary-700">Snuggles Pet Boarding</span>
+      </a>
+      <a href="/" class="text-stone-600 hover:text-primary-700 transition-colors">
+        Back to Home
+      </a>
+    </nav>
+  </header>
+
+  <main class="pt-24 pb-16 min-h-screen bg-stone-50">
+    <div class="max-w-2xl mx-auto px-4">
+      <!-- Progress Steps -->
+      <div class="mb-8">
+        <div class="flex items-center justify-between">
+          <div class="step-indicator active" data-step="1">
+            <div class="step-circle">1</div>
+            <span class="step-label">Service</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step-indicator" data-step="2">
+            <div class="step-circle">2</div>
+            <span class="step-label">Dates</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step-indicator" data-step="3">
+            <div class="step-circle">3</div>
+            <span class="step-label">Pets</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step-indicator" data-step="4">
+            <div class="step-circle">4</div>
+            <span class="step-label">Contact</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step-indicator" data-step="5">
+            <div class="step-circle">5</div>
+            <span class="step-label">Review</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wizard Container -->
+      <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 md:p-8">
+        <!-- Step 1: Service Selection -->
+        <div id="step-1" class="wizard-step">
+          <h2 class="font-serif text-2xl font-bold text-stone-800 mb-2">What service do you need?</h2>
+          <p class="text-stone-600 mb-6">Choose the type of care for your pet.</p>
+
+          <div class="grid gap-4">
+            <label class="service-option">
+              <input type="radio" name="service" value="boarding" class="sr-only" />
+              <div class="service-card">
+                <div class="flex items-start gap-4">
+                  <div class="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="font-bold text-stone-800">Boarding</h3>
+                    <p class="text-sm text-stone-600">Overnight stays with 24/7 care</p>
+                    <p class="text-sm text-primary-700 font-medium mt-1">From $40/night</p>
+                  </div>
+                  <div class="check-icon hidden">
+                    <svg class="w-6 h-6 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </label>
+
+            <label class="service-option">
+              <input type="radio" name="service" value="daycare" class="sr-only" />
+              <div class="service-card">
+                <div class="flex items-start gap-4">
+                  <div class="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="font-bold text-stone-800">Daycare</h3>
+                    <p class="text-sm text-stone-600">Daily care from 9am to 5pm</p>
+                    <p class="text-sm text-primary-700 font-medium mt-1">From $30/day</p>
+                  </div>
+                  <div class="check-icon hidden">
+                    <svg class="w-6 h-6 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </label>
+          </div>
+
+          <div class="mt-8 flex justify-end">
+            <button type="button" class="btn-next bg-primary-600 text-white px-6 py-3 rounded-full font-medium hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: Date Selection -->
+        <div id="step-2" class="wizard-step hidden">
+          <h2 class="font-serif text-2xl font-bold text-stone-800 mb-2">When do you need care?</h2>
+          <p class="text-stone-600 mb-6">Select your check-in and check-out dates.</p>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-stone-700 mb-2">Check-in Date</label>
+              <input type="date" id="check-in" class="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-stone-700 mb-2">Check-out Date</label>
+              <input type="date" id="check-out" class="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+            </div>
+          </div>
+
+          <div id="date-summary" class="mt-4 p-4 bg-stone-50 rounded-xl hidden">
+            <p class="text-stone-600"><span id="nights-count" class="font-bold text-stone-800">0</span> <span id="nights-label">nights</span></p>
+          </div>
+
+          <div class="mt-8 flex justify-between">
+            <button type="button" class="btn-prev text-stone-600 px-6 py-3 rounded-full font-medium hover:bg-stone-100 transition-colors">
+              Back
+            </button>
+            <button type="button" class="btn-next bg-primary-600 text-white px-6 py-3 rounded-full font-medium hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 3: Pet Information -->
+        <div id="step-3" class="wizard-step hidden">
+          <h2 class="font-serif text-2xl font-bold text-stone-800 mb-2">Tell us about your pets</h2>
+          <p class="text-stone-600 mb-6">Add all pets that will be staying with us.</p>
+
+          <div id="pets-container">
+            <!-- Pet forms will be added here dynamically -->
+          </div>
+
+          <button type="button" id="add-pet-btn" class="mt-4 w-full border-2 border-dashed border-stone-300 rounded-xl p-4 text-stone-600 hover:border-primary-400 hover:text-primary-600 transition-colors flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+            </svg>
+            Add Another Pet
+          </button>
+
+          <div id="breed-error" class="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl hidden">
+            <p class="text-red-700 font-medium" id="breed-error-message"></p>
+          </div>
+
+          <div class="mt-8 flex justify-between">
+            <button type="button" class="btn-prev text-stone-600 px-6 py-3 rounded-full font-medium hover:bg-stone-100 transition-colors">
+              Back
+            </button>
+            <button type="button" class="btn-next bg-primary-600 text-white px-6 py-3 rounded-full font-medium hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 4: Contact Information -->
+        <div id="step-4" class="wizard-step hidden">
+          <h2 class="font-serif text-2xl font-bold text-stone-800 mb-2">Your contact information</h2>
+          <p class="text-stone-600 mb-6">We'll use this to confirm your booking.</p>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-stone-700 mb-2">Full Name</label>
+              <input type="text" id="client-name" class="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="John Smith" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-stone-700 mb-2">Email</label>
+              <input type="email" id="client-email" class="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="john@example.com" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-stone-700 mb-2">Phone</label>
+              <input type="tel" id="client-phone" class="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="(555) 123-4567" />
+            </div>
+          </div>
+
+          <div class="mt-8 flex justify-between">
+            <button type="button" class="btn-prev text-stone-600 px-6 py-3 rounded-full font-medium hover:bg-stone-100 transition-colors">
+              Back
+            </button>
+            <button type="button" class="btn-next bg-primary-600 text-white px-6 py-3 rounded-full font-medium hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+              Review Booking
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 5: Review & Submit -->
+        <div id="step-5" class="wizard-step hidden">
+          <h2 class="font-serif text-2xl font-bold text-stone-800 mb-2">Review your booking</h2>
+          <p class="text-stone-600 mb-6">Please confirm all details are correct.</p>
+
+          <div class="space-y-6">
+            <!-- Service & Dates -->
+            <div class="p-4 bg-stone-50 rounded-xl">
+              <h3 class="font-bold text-stone-800 mb-3">Service & Dates</h3>
+              <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span class="text-stone-500">Service</span>
+                  <p class="font-medium text-stone-800" id="review-service"></p>
+                </div>
+                <div>
+                  <span class="text-stone-500">Duration</span>
+                  <p class="font-medium text-stone-800" id="review-duration"></p>
+                </div>
+                <div>
+                  <span class="text-stone-500">Check-in</span>
+                  <p class="font-medium text-stone-800" id="review-checkin"></p>
+                </div>
+                <div>
+                  <span class="text-stone-500">Check-out</span>
+                  <p class="font-medium text-stone-800" id="review-checkout"></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pets -->
+            <div class="p-4 bg-stone-50 rounded-xl">
+              <h3 class="font-bold text-stone-800 mb-3">Your Pets</h3>
+              <div id="review-pets" class="space-y-3">
+                <!-- Pets will be listed here -->
+              </div>
+            </div>
+
+            <!-- Contact -->
+            <div class="p-4 bg-stone-50 rounded-xl">
+              <h3 class="font-bold text-stone-800 mb-3">Contact Information</h3>
+              <div class="text-sm">
+                <p class="font-medium text-stone-800" id="review-name"></p>
+                <p class="text-stone-600" id="review-email"></p>
+                <p class="text-stone-600" id="review-phone"></p>
+              </div>
+            </div>
+
+            <!-- Price Estimate -->
+            <div class="p-4 bg-primary-50 rounded-xl border border-primary-200">
+              <div class="flex justify-between items-center">
+                <span class="font-bold text-stone-800">Estimated Total</span>
+                <span class="text-2xl font-bold text-primary-700" id="review-total">$0</span>
+              </div>
+              <p class="text-sm text-stone-600 mt-1">Final price may vary based on specific needs</p>
+            </div>
+
+            <!-- Meet & Greet Notice -->
+            <div id="meetgreet-notice" class="p-4 bg-amber-50 rounded-xl border border-amber-200 hidden">
+              <div class="flex gap-3">
+                <svg class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                <div>
+                  <p class="font-medium text-amber-800">Meet & Greet Required</p>
+                  <p class="text-sm text-amber-700 mt-1">Based on your pet's breed or size, we require a free Meet & Greet before confirming your booking. We'll contact you to schedule.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 flex justify-between">
+            <button type="button" class="btn-prev text-stone-600 px-6 py-3 rounded-full font-medium hover:bg-stone-100 transition-colors">
+              Back
+            </button>
+            <button type="button" id="submit-booking" class="bg-primary-600 text-white px-8 py-3 rounded-full font-medium hover:bg-primary-700 transition-colors flex items-center gap-2">
+              <span>Submit Booking Request</span>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Success State -->
+        <div id="step-success" class="wizard-step hidden text-center py-8">
+          <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+          </div>
+          <h2 class="font-serif text-2xl font-bold text-stone-800 mb-2">Booking Request Received!</h2>
+          <p class="text-stone-600 mb-4" id="success-message">We'll review your request and contact you shortly to confirm.</p>
+          <p class="text-sm text-stone-500 mb-6">Booking ID: <span class="font-mono font-medium" id="booking-id"></span></p>
+          <a href="/" class="inline-block bg-primary-600 text-white px-6 py-3 rounded-full font-medium hover:bg-primary-700 transition-colors">
+            Back to Home
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .step-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .step-circle {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    background-color: #e7e5e4;
+    color: #78716c;
+    transition: all 0.2s;
+  }
+
+  .step-indicator.active .step-circle,
+  .step-indicator.completed .step-circle {
+    background-color: #16a34a;
+    color: white;
+  }
+
+  .step-label {
+    font-size: 0.75rem;
+    color: #78716c;
+    display: none;
+  }
+
+  @media (min-width: 640px) {
+    .step-label {
+      display: block;
+    }
+  }
+
+  .step-indicator.active .step-label {
+    color: #16a34a;
+    font-weight: 500;
+  }
+
+  .step-line {
+    flex: 1;
+    height: 2px;
+    background-color: #e7e5e4;
+    margin: 0 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .service-card {
+    padding: 1rem;
+    border: 2px solid #e7e5e4;
+    border-radius: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .service-card:hover {
+    border-color: #86efac;
+  }
+
+  .service-option input:checked + .service-card {
+    border-color: #16a34a;
+    background-color: #f0fdf4;
+  }
+
+  .service-option input:checked + .service-card .check-icon {
+    display: block;
+  }
+
+  .pet-form {
+    padding: 1rem;
+    border: 1px solid #e7e5e4;
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .wizard-step.hidden {
+    display: none;
+  }
+</style>
+
+<script define:vars={{ API_URL }}>
+  // Booking wizard state
+  const state = {
+    currentStep: 1,
+    service: '',
+    checkIn: '',
+    checkOut: '',
+    pets: [],
+    client: {
+      name: '',
+      email: '',
+      phone: ''
+    },
+    estimate: null
+  };
+
+  // Blocked breeds (must match backend)
+  const blockedBreeds = [
+    'rottweiler', 'rottie', 'mastiff', 'english mastiff', 'bull mastiff',
+    'neapolitan mastiff', 'tibetan mastiff', 'cane corso', 'presa canario',
+    'dogo argentino', 'fila brasileiro', 'tosa inu', 'wolf hybrid', 'wolfdog'
+  ];
+
+  // Breeds requiring meet & greet
+  const meetGreetBreeds = [
+    'pit bull', 'pitbull', 'pit mix', 'american pit bull terrier',
+    'doberman', 'doberman pinscher', 'german shepherd', 'akita', 'chow chow'
+  ];
+
+  // DOM elements
+  const steps = document.querySelectorAll('.wizard-step');
+  const stepIndicators = document.querySelectorAll('.step-indicator');
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => {
+    initServiceSelection();
+    initDateSelection();
+    initPetForms();
+    initContactForm();
+    initNavigation();
+    addPetForm(); // Add first pet form
+  });
+
+  function initServiceSelection() {
+    const serviceInputs = document.querySelectorAll('input[name="service"]');
+    const nextBtn = document.querySelector('#step-1 .btn-next');
+
+    serviceInputs.forEach(input => {
+      input.addEventListener('change', () => {
+        state.service = input.value;
+        nextBtn.disabled = false;
+      });
+    });
+  }
+
+  function initDateSelection() {
+    const checkInInput = document.getElementById('check-in');
+    const checkOutInput = document.getElementById('check-out');
+    const dateSummary = document.getElementById('date-summary');
+    const nightsCount = document.getElementById('nights-count');
+    const nightsLabel = document.getElementById('nights-label');
+    const nextBtn = document.querySelector('#step-2 .btn-next');
+
+    // Set min date to today
+    const today = new Date().toISOString().split('T')[0];
+    checkInInput.min = today;
+    checkOutInput.min = today;
+
+    function updateDateSummary() {
+      if (checkInInput.value && checkOutInput.value) {
+        const start = new Date(checkInInput.value);
+        const end = new Date(checkOutInput.value);
+        const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+
+        if (nights > 0) {
+          state.checkIn = checkInInput.value;
+          state.checkOut = checkOutInput.value;
+          nightsCount.textContent = nights;
+          nightsLabel.textContent = state.service === 'daycare' ? (nights === 1 ? 'day' : 'days') : (nights === 1 ? 'night' : 'nights');
+          dateSummary.classList.remove('hidden');
+          nextBtn.disabled = false;
+        } else {
+          dateSummary.classList.add('hidden');
+          nextBtn.disabled = true;
+        }
+      }
+    }
+
+    checkInInput.addEventListener('change', () => {
+      checkOutInput.min = checkInInput.value;
+      updateDateSummary();
+    });
+
+    checkOutInput.addEventListener('change', updateDateSummary);
+  }
+
+  function initPetForms() {
+    const addPetBtn = document.getElementById('add-pet-btn');
+    addPetBtn.addEventListener('click', addPetForm);
+  }
+
+  function addPetForm() {
+    const container = document.getElementById('pets-container');
+    const petIndex = state.pets.length;
+
+    state.pets.push({
+      name: '',
+      type: 'dog',
+      breed: '',
+      weight: 0,
+      ageYears: 0,
+      isPuppy: false,
+      needsMedication: false,
+      medicationNotes: '',
+      getsAlongDogs: 'yes',
+      getsAlongCats: 'unknown',
+      specialNeeds: ''
+    });
+
+    const petForm = document.createElement('div');
+    petForm.className = 'pet-form';
+    petForm.dataset.petIndex = petIndex;
+    petForm.innerHTML = `
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-stone-800">Pet ${petIndex + 1}</h3>
+        ${petIndex > 0 ? `<button type="button" class="remove-pet text-red-500 hover:text-red-700 text-sm">Remove</button>` : ''}
+      </div>
+
+      <div class="grid gap-4">
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-stone-700 mb-1">Pet Name</label>
+            <input type="text" class="pet-name w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Buddy" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-stone-700 mb-1">Pet Type</label>
+            <select class="pet-type w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+              <option value="dog">Dog</option>
+              <option value="cat">Cat</option>
+              <option value="bird">Bird</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="dog-fields">
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-stone-700 mb-1">Breed</label>
+              <input type="text" class="pet-breed w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Golden Retriever" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-stone-700 mb-1">Weight (lbs)</label>
+              <input type="number" class="pet-weight w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="50" min="1" max="300" />
+            </div>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-stone-700 mb-1">Age (years)</label>
+            <input type="number" class="pet-age w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="3" min="0" max="30" step="0.5" />
+          </div>
+        </div>
+
+        <div class="dog-fields space-y-3">
+          <label class="flex items-center gap-2">
+            <input type="checkbox" class="pet-puppy w-4 h-4 text-primary-600 border-stone-300 rounded focus:ring-primary-500" />
+            <span class="text-sm text-stone-700">Puppy (under 1 year old)</span>
+          </label>
+          <label class="flex items-center gap-2">
+            <input type="checkbox" class="pet-medication w-4 h-4 text-primary-600 border-stone-300 rounded focus:ring-primary-500" />
+            <span class="text-sm text-stone-700">Requires medication</span>
+          </label>
+        </div>
+
+        <div class="medication-fields hidden">
+          <label class="block text-sm font-medium text-stone-700 mb-1">Medication Details</label>
+          <textarea class="pet-medication-notes w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" rows="2" placeholder="Medication name, dosage, and schedule"></textarea>
+        </div>
+
+        <div class="dog-fields grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-stone-700 mb-1">Gets along with dogs?</label>
+            <select class="pet-along-dogs w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+              <option value="yes">Yes</option>
+              <option value="sometimes">Sometimes</option>
+              <option value="no">No</option>
+              <option value="unknown">Unknown</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-stone-700 mb-1">Gets along with cats?</label>
+            <select class="pet-along-cats w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+              <option value="yes">Yes</option>
+              <option value="sometimes">Sometimes</option>
+              <option value="no">No</option>
+              <option value="unknown" selected>Unknown</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-stone-700 mb-1">Special needs or notes (optional)</label>
+          <textarea class="pet-special-needs w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" rows="2" placeholder="Any special care instructions..."></textarea>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(petForm);
+
+    // Set up event listeners for this pet form
+    setupPetFormListeners(petForm, petIndex);
+  }
+
+  function setupPetFormListeners(form, index) {
+    const typeSelect = form.querySelector('.pet-type');
+    const dogFields = form.querySelectorAll('.dog-fields');
+    const medicationCheckbox = form.querySelector('.pet-medication');
+    const medicationFields = form.querySelector('.medication-fields');
+    const removeBtn = form.querySelector('.remove-pet');
+
+    // Toggle dog-specific fields
+    typeSelect.addEventListener('change', () => {
+      const isDog = typeSelect.value === 'dog';
+      dogFields.forEach(field => field.style.display = isDog ? '' : 'none');
+      state.pets[index].type = typeSelect.value;
+      validatePetsStep();
+    });
+
+    // Toggle medication fields
+    medicationCheckbox?.addEventListener('change', () => {
+      medicationFields.classList.toggle('hidden', !medicationCheckbox.checked);
+      state.pets[index].needsMedication = medicationCheckbox.checked;
+    });
+
+    // Remove pet
+    removeBtn?.addEventListener('click', () => {
+      state.pets.splice(index, 1);
+      form.remove();
+      updatePetFormIndices();
+      validatePetsStep();
+    });
+
+    // Update state on input changes
+    form.querySelector('.pet-name').addEventListener('input', (e) => {
+      state.pets[index].name = e.target.value;
+      validatePetsStep();
+    });
+
+    form.querySelector('.pet-breed')?.addEventListener('input', (e) => {
+      state.pets[index].breed = e.target.value;
+      checkBreedBlocked(e.target.value);
+      validatePetsStep();
+    });
+
+    form.querySelector('.pet-weight')?.addEventListener('input', (e) => {
+      state.pets[index].weight = parseFloat(e.target.value) || 0;
+      validatePetsStep();
+    });
+
+    form.querySelector('.pet-age')?.addEventListener('input', (e) => {
+      state.pets[index].ageYears = parseFloat(e.target.value) || 0;
+      validatePetsStep();
+    });
+
+    form.querySelector('.pet-puppy')?.addEventListener('change', (e) => {
+      state.pets[index].isPuppy = e.target.checked;
+    });
+
+    form.querySelector('.pet-medication-notes')?.addEventListener('input', (e) => {
+      state.pets[index].medicationNotes = e.target.value;
+    });
+
+    form.querySelector('.pet-along-dogs')?.addEventListener('change', (e) => {
+      state.pets[index].getsAlongDogs = e.target.value;
+    });
+
+    form.querySelector('.pet-along-cats')?.addEventListener('change', (e) => {
+      state.pets[index].getsAlongCats = e.target.value;
+    });
+
+    form.querySelector('.pet-special-needs')?.addEventListener('input', (e) => {
+      state.pets[index].specialNeeds = e.target.value;
+    });
+  }
+
+  function updatePetFormIndices() {
+    const forms = document.querySelectorAll('.pet-form');
+    forms.forEach((form, i) => {
+      form.dataset.petIndex = i;
+      form.querySelector('h3').textContent = `Pet ${i + 1}`;
+    });
+  }
+
+  function checkBreedBlocked(breed) {
+    const breedLower = breed.toLowerCase();
+    const errorEl = document.getElementById('breed-error');
+    const errorMsg = document.getElementById('breed-error-message');
+
+    for (const blocked of blockedBreeds) {
+      if (breedLower.includes(blocked)) {
+        errorMsg.textContent = `We're sorry, but we're unable to accommodate ${breed} at this time due to our facility limitations.`;
+        errorEl.classList.remove('hidden');
+        return true;
+      }
+    }
+
+    errorEl.classList.add('hidden');
+    return false;
+  }
+
+  function validatePetsStep() {
+    const nextBtn = document.querySelector('#step-3 .btn-next');
+    const errorEl = document.getElementById('breed-error');
+
+    // Check if any breed is blocked
+    let hasBlockedBreed = false;
+    for (const pet of state.pets) {
+      if (pet.type === 'dog' && checkBreedBlocked(pet.breed)) {
+        hasBlockedBreed = true;
+        break;
+      }
+    }
+
+    if (hasBlockedBreed) {
+      nextBtn.disabled = true;
+      return;
+    }
+
+    // Validate all pets have required info
+    const isValid = state.pets.length > 0 && state.pets.every(pet => {
+      if (!pet.name) return false;
+      if (pet.type === 'dog' && (!pet.breed || !pet.weight)) return false;
+      return true;
+    });
+
+    nextBtn.disabled = !isValid;
+  }
+
+  function initContactForm() {
+    const nameInput = document.getElementById('client-name');
+    const emailInput = document.getElementById('client-email');
+    const phoneInput = document.getElementById('client-phone');
+    const nextBtn = document.querySelector('#step-4 .btn-next');
+
+    function validateContact() {
+      state.client.name = nameInput.value;
+      state.client.email = emailInput.value;
+      state.client.phone = phoneInput.value;
+
+      const isValid = state.client.name && state.client.email && state.client.phone;
+      nextBtn.disabled = !isValid;
+    }
+
+    nameInput.addEventListener('input', validateContact);
+    emailInput.addEventListener('input', validateContact);
+    phoneInput.addEventListener('input', validateContact);
+  }
+
+  function initNavigation() {
+    // Next buttons
+    document.querySelectorAll('.btn-next').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (state.currentStep < 5) {
+          goToStep(state.currentStep + 1);
+        }
+      });
+    });
+
+    // Previous buttons
+    document.querySelectorAll('.btn-prev').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (state.currentStep > 1) {
+          goToStep(state.currentStep - 1);
+        }
+      });
+    });
+
+    // Submit button
+    document.getElementById('submit-booking').addEventListener('click', submitBooking);
+  }
+
+  function goToStep(step) {
+    // Update indicators
+    stepIndicators.forEach((indicator, i) => {
+      indicator.classList.remove('active', 'completed');
+      if (i + 1 < step) indicator.classList.add('completed');
+      if (i + 1 === step) indicator.classList.add('active');
+    });
+
+    // Show/hide steps
+    steps.forEach((stepEl, i) => {
+      stepEl.classList.toggle('hidden', i + 1 !== step);
+    });
+
+    state.currentStep = step;
+
+    // Update review if on step 5
+    if (step === 5) {
+      updateReview();
+    }
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function updateReview() {
+    // Service & dates
+    document.getElementById('review-service').textContent = state.service === 'boarding' ? 'Boarding' : 'Daycare';
+
+    const nights = Math.ceil((new Date(state.checkOut) - new Date(state.checkIn)) / (1000 * 60 * 60 * 24));
+    const unit = state.service === 'daycare' ? 'day' : 'night';
+    document.getElementById('review-duration').textContent = `${nights} ${unit}${nights > 1 ? 's' : ''}`;
+
+    document.getElementById('review-checkin').textContent = formatDate(state.checkIn);
+    document.getElementById('review-checkout').textContent = formatDate(state.checkOut);
+
+    // Pets
+    const petsContainer = document.getElementById('review-pets');
+    petsContainer.innerHTML = state.pets.map(pet => `
+      <div class="flex items-center gap-3 text-sm">
+        <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+          <span class="text-primary-700 font-medium">${pet.name.charAt(0).toUpperCase()}</span>
+        </div>
+        <div>
+          <p class="font-medium text-stone-800">${pet.name}</p>
+          <p class="text-stone-600">${pet.type === 'dog' ? `${pet.breed}, ${pet.weight} lbs` : pet.type}</p>
+        </div>
+      </div>
+    `).join('');
+
+    // Contact
+    document.getElementById('review-name').textContent = state.client.name;
+    document.getElementById('review-email').textContent = state.client.email;
+    document.getElementById('review-phone').textContent = state.client.phone;
+
+    // Get estimate from API
+    try {
+      const response = await fetch(`${API_URL}/api/estimate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service: state.service,
+          pets: state.pets.map(p => ({
+            type: p.type,
+            isPuppy: p.isPuppy,
+            needsMedication: p.needsMedication
+          })),
+          checkIn: state.checkIn,
+          checkOut: state.checkOut
+        })
+      });
+
+      const estimate = await response.json();
+      state.estimate = estimate;
+      document.getElementById('review-total').textContent = `$${estimate.total}`;
+    } catch (error) {
+      console.error('Error getting estimate:', error);
+    }
+
+    // Check if meet & greet is required
+    const needsMeetGreet = state.pets.some(pet => {
+      if (pet.type !== 'dog') return false;
+      const breedLower = pet.breed.toLowerCase();
+      const weight = pet.weight;
+
+      // Check breed
+      if (meetGreetBreeds.some(b => breedLower.includes(b))) return true;
+
+      // Check size (large = 41+ lbs)
+      if (weight >= 41) return true;
+
+      return false;
+    });
+
+    document.getElementById('meetgreet-notice').classList.toggle('hidden', !needsMeetGreet);
+  }
+
+  async function submitBooking() {
+    const submitBtn = document.getElementById('submit-booking');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span>Submitting...</span>';
+
+    try {
+      const response = await fetch(`${API_URL}/api/bookings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service: state.service,
+          checkIn: state.checkIn,
+          checkOut: state.checkOut,
+          client: state.client,
+          pets: state.pets,
+          source: 'website'
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.status === 'success') {
+        document.getElementById('booking-id').textContent = result.bookingId;
+        document.getElementById('success-message').textContent = result.message;
+
+        // Hide all steps and show success
+        steps.forEach(step => step.classList.add('hidden'));
+        document.getElementById('step-success').classList.remove('hidden');
+
+        // Hide progress indicators
+        document.querySelector('.mb-8').style.display = 'none';
+      } else if (result.status === 'rejected') {
+        alert(result.message);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Submit Booking Request</span>';
+      } else {
+        throw new Error(result.message || 'Failed to submit booking');
+      }
+    } catch (error) {
+      console.error('Error submitting booking:', error);
+      alert('Something went wrong. Please try again or contact us directly.');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<span>Submit Booking Request</span>';
+    }
+  }
+
+  function formatDate(dateStr) {
+    const date = new Date(dateStr + 'T00:00:00');
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  }
+</script>
