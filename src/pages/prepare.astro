@@ -1,0 +1,506 @@
+---
+import Layout from '../layouts/Layout.astro'
+import logoIcon from '../assets/images/logo-expanded.svg'
+---
+
+<Layout title="What to Bring | Snuggles Pet Boarding" description="Prepare your pet for their stay at Snuggles Pet Boarding. Checklists for dogs, cats, required vaccines, and daily schedule.">
+  <!-- Header -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm border-b border-stone-200">
+    <nav class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3">
+        <img src={logoIcon.src} alt="Snuggles Pet Boarding" class="w-12 h-12" />
+        <span class="text-xl font-bold text-primary-700">Snuggles Pet Boarding</span>
+      </a>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="/#services" class="text-stone-600 hover:text-primary-700 transition-colors">Services</a>
+        <a href="/#why-us" class="text-stone-600 hover:text-primary-700 transition-colors">Why Us</a>
+        <a href="/#contact" class="text-stone-600 hover:text-primary-700 transition-colors">Contact</a>
+        <a href="/prepare" class="text-primary-700 font-medium">Prepare</a>
+        <a href="https://www.rover.com/members/anna-c-pet-boarding-and-daycare/" target="_blank" rel="noopener" class="bg-primary-600 text-white px-5 py-2 rounded-full hover:bg-primary-700 transition-colors font-medium">
+          Book Now
+        </a>
+      </div>
+      <button id="mobile-menu-btn" class="md:hidden p-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </nav>
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-stone-200">
+      <div class="px-4 py-4 space-y-4">
+        <a href="/#services" class="block text-stone-600 hover:text-primary-700">Services</a>
+        <a href="/#why-us" class="block text-stone-600 hover:text-primary-700">Why Us</a>
+        <a href="/#contact" class="block text-stone-600 hover:text-primary-700">Contact</a>
+        <a href="/prepare" class="block text-primary-700 font-medium">Prepare</a>
+        <a href="https://www.rover.com/members/anna-c-pet-boarding-and-daycare/" target="_blank" rel="noopener" class="block bg-primary-600 text-white px-5 py-2 rounded-full text-center font-medium">Book Now</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="pt-24 pb-20">
+    <!-- Hero -->
+    <section class="py-12 bg-primary-50">
+      <div class="max-w-4xl mx-auto px-4 text-center">
+        <h1 class="font-serif text-3xl md:text-4xl font-bold text-stone-800 mb-4">Prepare for Your Pet's Stay</h1>
+        <p class="text-lg text-stone-600">
+          Everything you need to know before dropping off your furry friend.
+        </p>
+      </div>
+    </section>
+
+    <!-- Dog Boarding Checklist -->
+    <section class="py-12 bg-white">
+      <div class="max-w-4xl mx-auto px-4">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0 0L9.121 9.121"/>
+            </svg>
+          </div>
+          <h2 class="font-serif text-2xl font-bold text-stone-800">Dog Boarding Checklist</h2>
+        </div>
+
+        <div class="bg-stone-50 rounded-2xl p-6 border border-stone-200">
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-stone-700"><strong>Vaccine records</strong> - Rabies, DHPP, Bordetella (required)</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-stone-700"><strong>Collar with ID tags</strong></span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-stone-700"><strong>Water bowl</strong> - Something familiar from home</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-stone-700"><strong>Treats</strong> - Their favorites for positive reinforcement</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-stone-700"><strong>Bed or blanket</strong> - Helps them feel at home</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-stone-700"><strong>Food</strong> - Enough for their entire stay (plus a bit extra)</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cat Boarding Checklist -->
+    <section class="py-12 bg-stone-50">
+      <div class="max-w-4xl mx-auto px-4">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+          </div>
+          <h2 class="font-serif text-2xl font-bold text-stone-800">Cat Boarding Checklist</h2>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 border border-stone-200">
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-stone-700"><strong>Carrier or crate</strong> - For safe transport and a cozy hideaway</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-stone-700"><strong>Food</strong> - Dry and/or wet food for the duration of stay (plus extra)</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-stone-700"><strong>Food and water bowls</strong> - Familiar items reduce stress</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-stone-700"><strong>Litter box and litter</strong> - If they have a preferred type</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-stone-700"><strong>Bedding or blanket</strong> - Something that smells like home</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-stone-700"><strong>Toys</strong> - Favorite toys help them feel comfortable</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-stone-700"><strong>Medications</strong> - With clear dosage instructions</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-stone-700"><strong>Vet contact information</strong> - In case of emergency</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-stone-700"><strong>Any special behavior notes</strong> - Likes, dislikes, quirks</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Required Vaccines -->
+    <section class="py-12 bg-white">
+      <div class="max-w-4xl mx-auto px-4">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+          </div>
+          <h2 class="font-serif text-2xl font-bold text-stone-800">Required Vaccines</h2>
+        </div>
+
+        <div class="bg-red-50 rounded-2xl p-6 border border-red-200">
+          <p class="text-stone-700 mb-4">All dogs must be up-to-date on the following vaccines:</p>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="flex items-center gap-3 bg-white rounded-lg p-3">
+              <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>
+              <span class="font-medium text-stone-800">Rabies</span>
+            </div>
+            <div class="flex items-center gap-3 bg-white rounded-lg p-3">
+              <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>
+              <span class="font-medium text-stone-800">DHPP</span>
+            </div>
+            <div class="flex items-center gap-3 bg-white rounded-lg p-3">
+              <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>
+              <span class="font-medium text-stone-800">Bordetella</span>
+            </div>
+            <div class="flex items-center gap-3 bg-white rounded-lg p-3">
+              <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>
+              <span class="font-medium text-stone-800">Leptospirosis</span>
+            </div>
+            <div class="flex items-center gap-3 bg-white rounded-lg p-3 sm:col-span-2">
+              <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>
+              <span class="font-medium text-stone-800">CIV (Canine Influenza)</span>
+            </div>
+          </div>
+          <p class="text-sm text-stone-600 mt-4">
+            Please bring proof of vaccination to your first visit or email them to us in advance.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Farm Life Essentials -->
+    <section class="py-12 bg-stone-50">
+      <div class="max-w-4xl mx-auto px-4">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+            </svg>
+          </div>
+          <h2 class="font-serif text-2xl font-bold text-stone-800">Farm Life Essentials</h2>
+        </div>
+
+        <div class="bg-amber-50 rounded-2xl p-6 border border-amber-200">
+          <p class="text-stone-700 mb-4">
+            Since your pet will be enjoying farm life, please ensure they're protected:
+          </p>
+          <div class="space-y-3">
+            <div class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-stone-700"><strong>Flea & Tick Prevention</strong> - Must be current before arrival</span>
+            </div>
+            <div class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-stone-700"><strong>Heartworm Prevention</strong> - Monthly prevention recommended</span>
+            </div>
+          </div>
+          <p class="text-sm text-stone-600 mt-4">
+            Our farm environment is wonderful but does mean exposure to outdoor elements. Keeping your pet protected ensures a safe and happy stay.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Daily Dog Schedule -->
+    <section class="py-12 bg-white">
+      <div class="max-w-4xl mx-auto px-4">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <h2 class="font-serif text-2xl font-bold text-stone-800">A Day at Snuggles</h2>
+        </div>
+
+        <div class="bg-blue-50 rounded-2xl p-6 border border-blue-200">
+          <p class="text-stone-700 mb-4">Here's what a typical day looks like for our dog guests:</p>
+          <div class="space-y-4">
+            <div class="flex items-start gap-4">
+              <div class="bg-blue-600 text-white text-sm font-medium px-3 py-1 rounded-full whitespace-nowrap">6:00 AM</div>
+              <span class="text-stone-700">Morning walk and potty break</span>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="bg-blue-600 text-white text-sm font-medium px-3 py-1 rounded-full whitespace-nowrap">7:00 AM</div>
+              <span class="text-stone-700">Breakfast time</span>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="bg-blue-600 text-white text-sm font-medium px-3 py-1 rounded-full whitespace-nowrap">9:00 AM</div>
+              <span class="text-stone-700">Playtime and outdoor exploration</span>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="bg-blue-600 text-white text-sm font-medium px-3 py-1 rounded-full whitespace-nowrap">12:00 PM</div>
+              <span class="text-stone-700">Midday walk</span>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="bg-blue-600 text-white text-sm font-medium px-3 py-1 rounded-full whitespace-nowrap">1:00 PM</div>
+              <span class="text-stone-700">Rest and nap time</span>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="bg-blue-600 text-white text-sm font-medium px-3 py-1 rounded-full whitespace-nowrap">4:00 PM</div>
+              <span class="text-stone-700">Afternoon playtime</span>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="bg-blue-600 text-white text-sm font-medium px-3 py-1 rounded-full whitespace-nowrap">6:00 PM</div>
+              <span class="text-stone-700">Dinner time</span>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="bg-blue-600 text-white text-sm font-medium px-3 py-1 rounded-full whitespace-nowrap">8:00 PM</div>
+              <span class="text-stone-700">Evening walk</span>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="bg-blue-600 text-white text-sm font-medium px-3 py-1 rounded-full whitespace-nowrap">11:00 PM</div>
+              <span class="text-stone-700">Final potty break and bedtime</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Payment Policy -->
+    <section class="py-12 bg-stone-50">
+      <div class="max-w-4xl mx-auto px-4">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+            </svg>
+          </div>
+          <h2 class="font-serif text-2xl font-bold text-stone-800">Payment Policy</h2>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 border border-stone-200">
+          <p class="text-stone-700 mb-6">
+            To confirm your booking, we require full payment before the stay. This ensures your spot is reserved.
+          </p>
+
+          <h3 class="font-semibold text-stone-800 mb-4">Accepted Payment Methods</h3>
+          <div class="grid sm:grid-cols-2 gap-3 mb-6">
+            <div class="flex items-center gap-3 bg-stone-50 rounded-lg p-4">
+              <svg class="w-6 h-6 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              <div>
+                <span class="font-medium text-stone-800">Zelle</span>
+                <p class="text-sm text-stone-600">954-907-7750</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 bg-stone-50 rounded-lg p-4">
+              <svg class="w-6 h-6 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              <div>
+                <span class="font-medium text-stone-800">Apple Pay</span>
+                <p class="text-sm text-stone-600">954-304-3151</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 bg-stone-50 rounded-lg p-4">
+              <svg class="w-6 h-6 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              <div>
+                <span class="font-medium text-stone-800">Venmo</span>
+                <p class="text-sm text-stone-600">@Anna-Canedo</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 bg-stone-50 rounded-lg p-4">
+              <svg class="w-6 h-6 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              <div>
+                <span class="font-medium text-stone-800">PayPal</span>
+                <p class="text-sm text-stone-600">@AnnaCMello</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <p class="text-sm text-amber-800">
+              <strong>PayPal Note:</strong> Please select "Friends and Family" to avoid fees. If sent as "Goods and Services," a 10% fee will be added to cover processing costs.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cancellation Policy -->
+    <section class="py-12 bg-white">
+      <div class="max-w-4xl mx-auto px-4">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-12 h-12 bg-stone-200 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+          </div>
+          <h2 class="font-serif text-2xl font-bold text-stone-800">Cancellation Policy</h2>
+        </div>
+
+        <div class="bg-stone-50 rounded-2xl p-6 border border-stone-200">
+          <div class="space-y-4">
+            <div class="flex items-start gap-4 p-4 bg-green-50 rounded-lg border border-green-200">
+              <svg class="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              <div>
+                <span class="font-semibold text-green-800">Full Refund</span>
+                <p class="text-sm text-green-700">If canceled 3+ days before boarding</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4 p-4 bg-amber-50 rounded-lg border border-amber-200">
+              <svg class="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>
+              <div>
+                <span class="font-semibold text-amber-800">50% Refund</span>
+                <p class="text-sm text-amber-700">If canceled within 3 days of boarding</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4 p-4 bg-red-50 rounded-lg border border-red-200">
+              <svg class="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+              <div>
+                <span class="font-semibold text-red-800">No Refund</span>
+                <p class="text-sm text-red-700">On the day of boarding or after check-in</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-12 bg-primary-600">
+      <div class="max-w-4xl mx-auto px-4 text-center">
+        <h2 class="font-serif text-2xl md:text-3xl font-bold text-white mb-4">Ready to Book?</h2>
+        <p class="text-primary-100 mb-8">
+          Questions about what to bring? Give us a call or book your stay today.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="https://www.rover.com/members/anna-c-pet-boarding-and-daycare/" target="_blank" rel="noopener" class="bg-white text-primary-700 px-8 py-4 rounded-full text-lg font-semibold transition-all hover:scale-105 shadow-lg">
+            Book on Rover
+          </a>
+          <a href="tel:+19549077750" class="bg-primary-700 hover:bg-primary-800 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all border border-primary-500">
+            Call (954) 907-7750
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-stone-800 text-stone-300 py-12">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="grid md:grid-cols-3 gap-8 mb-8">
+        <div>
+          <h3 class="text-white font-bold text-lg mb-4">Snuggles Pet Boarding</h3>
+          <p class="text-sm">
+            Where pets roam free. Family-owned pet boarding
+            in Melbourne, Florida.
+          </p>
+        </div>
+        <div>
+          <h3 class="text-white font-bold text-lg mb-4">Quick Links</h3>
+          <div class="space-y-2">
+            <a href="/#services" class="block text-sm hover:text-white transition-colors">Services</a>
+            <a href="/#about" class="block text-sm hover:text-white transition-colors">About Us</a>
+            <a href="/#contact" class="block text-sm hover:text-white transition-colors">Contact</a>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-white font-bold text-lg mb-4">Location</h3>
+          <p class="text-sm">
+            4253 Pinewood Rd<br>
+            Melbourne, FL<br>
+            <a href="tel:+19549077750" class="hover:text-white">(954) 907-7750</a>
+          </p>
+        </div>
+      </div>
+      <div class="border-t border-stone-700 pt-8 text-center text-sm">
+        <p>&copy; {new Date().getFullYear()} Snuggles Pet Boarding. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById('mobile-menu-btn')
+    const mobileMenu = document.getElementById('mobile-menu')
+
+    menuBtn?.addEventListener('click', () => {
+      mobileMenu?.classList.toggle('hidden')
+    })
+
+    mobileMenu?.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu?.classList.add('hidden')
+      })
+    })
+  </script>
+</Layout>

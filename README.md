@@ -48,10 +48,30 @@ src/
 - About
 - Contact
 
-## Pendente
+## Concluído
 
-- [ ] Preços reais
-- [ ] Telefone
-- [ ] Endereço completo
-- [ ] Mais fotos
-- [ ] Horários corretos
+- [x] Preços (range por categoria)
+- [x] Telefone: (954) 907-7750
+- [x] Endereço: 4253 Pinewood Rd, Melbourne, FL
+- [x] Galeria com fotos reais
+- [x] Horários: 9am-5pm
+- [x] Página /prepare (checklists, vacinas, políticas)
+- [x] Mapa satélite
+- [x] Integração Rover (Book Now)
+- [x] Payment Policy (Zelle, Venmo, Apple Pay, PayPal)
+- [x] Cancellation Policy
+
+## Roadmap
+
+- [ ] Botão WhatsApp no hero ("Book directly with us")
+- [ ] Adicionar logo no header
+- [ ] Calendly para Meet & Greet (aguardando Anna criar conta)
+- [ ] Favicon com logo
+- [ ] Commit no GitHub
+
+## Assets Disponíveis
+
+Logos salvos em `src/assets/images/`:
+- `logo-snuggles-farm.jpg` - Logo ilustrado (celeiro + cachorros)
+- `logo-snuggles-boarding.jpg` - Logo colorido (animais diversos)
+- `logo-caipirinha-farm.jpg` - Logo Caipirinha Farm

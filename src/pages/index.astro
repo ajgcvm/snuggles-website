@@ -1,22 +1,31 @@
 ---
 import Layout from '../layouts/Layout.astro'
 import { Image } from 'astro:assets'
-import heroImage from '../assets/images/doc_rolling.jpg'
-import dogWater from '../assets/images/profile_pic.jpg'
+import heroImage from '../assets/images/dogs-running-trail.jpg'
+import gallery1 from '../assets/images/dogs-running-trail.jpg'
+import gallery2 from '../assets/images/poodle-puppy.jpg'
+import gallery3 from '../assets/images/pointers-running.jpg'
+import gallery4 from '../assets/images/pomeranian-black.jpg'
+import gallery5 from '../assets/images/labrador-ball.jpg'
+import gallery6 from '../assets/images/bulldog-smiling.jpg'
+import aboutImage from '../assets/images/two-dogs-sitting.jpg'
+import logoIcon from '../assets/images/logo-expanded.svg'
 ---
 
 <Layout title="Snuggles Pet Boarding | Melbourne, FL">
   <!-- Header -->
   <header class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm border-b border-stone-200">
-    <nav class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-      <a href="/" class="text-xl font-bold text-primary-700">
-        Snuggles Pet Boarding
+    <nav class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3">
+        <img src={logoIcon.src} alt="Snuggles Pet Boarding" class="w-12 h-12" />
+        <span class="text-xl font-bold text-primary-700">Snuggles Pet Boarding</span>
       </a>
       <div class="hidden md:flex items-center gap-8">
         <a href="#services" class="text-stone-600 hover:text-primary-700 transition-colors">Services</a>
         <a href="#why-us" class="text-stone-600 hover:text-primary-700 transition-colors">Why Us</a>
         <a href="#gallery" class="text-stone-600 hover:text-primary-700 transition-colors">Gallery</a>
         <a href="#about" class="text-stone-600 hover:text-primary-700 transition-colors">About</a>
+        <a href="/prepare" class="text-stone-600 hover:text-primary-700 transition-colors">Prepare</a>
         <a href="https://www.rover.com/members/anna-c-pet-boarding-and-daycare/" target="_blank" rel="noopener" class="bg-primary-600 text-white px-5 py-2 rounded-full hover:bg-primary-700 transition-colors font-medium">
           Book Now
         </a>
@@ -35,6 +44,7 @@ import dogWater from '../assets/images/profile_pic.jpg'
         <a href="#why-us" class="block text-stone-600 hover:text-primary-700">Why Us</a>
         <a href="#gallery" class="block text-stone-600 hover:text-primary-700">Gallery</a>
         <a href="#about" class="block text-stone-600 hover:text-primary-700">About</a>
+        <a href="/prepare" class="block text-stone-600 hover:text-primary-700">Prepare</a>
         <a href="https://www.rover.com/members/anna-c-pet-boarding-and-daycare/" target="_blank" rel="noopener" class="block bg-primary-600 text-white px-5 py-2 rounded-full text-center font-medium">Book Now</a>
       </div>
     </div>
@@ -45,8 +55,8 @@ import dogWater from '../assets/images/profile_pic.jpg'
     <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
       <Image
         src={heroImage}
-        alt="Happy dog rolling in grass at Snuggles Pet Boarding farm"
-        class="absolute inset-0 w-full h-full object-cover"
+        alt="Happy dogs running on the farm at Snuggles Pet Boarding"
+        class="absolute inset-0 w-full h-full object-cover object-[center_60%] md:object-[center_70%]"
         widths={[640, 1024, 1920]}
         sizes="100vw"
       />
@@ -209,6 +219,15 @@ import dogWater from '../assets/images/profile_pic.jpg'
             <a href="#contact" class="text-primary-600 hover:text-primary-700 font-medium">Contact us</a> for a personalized quote.
           </p>
         </div>
+
+        <div class="mt-6 text-center">
+          <a href="/prepare" class="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium">
+            Booked your stay? See what to bring
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
+          </a>
+        </div>
       </div>
     </section>
 
@@ -292,8 +311,8 @@ import dogWater from '../assets/images/profile_pic.jpg'
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div class="aspect-square overflow-hidden rounded-xl">
             <Image
-              src={heroImage}
-              alt="Dog enjoying the farm"
+              src={gallery1}
+              alt="Two happy dogs running on farm trail"
               class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
               widths={[400, 600]}
               sizes="(max-width: 768px) 50vw, 33vw"
@@ -301,21 +320,48 @@ import dogWater from '../assets/images/profile_pic.jpg'
           </div>
           <div class="aspect-square overflow-hidden rounded-xl">
             <Image
-              src={dogWater}
-              alt="Dog playing in water"
+              src={gallery2}
+              alt="Cute poodle puppy on the grass"
               class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
               widths={[400, 600]}
               sizes="(max-width: 768px) 50vw, 33vw"
             />
           </div>
-          <!-- Placeholder for more photos -->
-          <div class="aspect-square overflow-hidden rounded-xl bg-stone-100 flex items-center justify-center">
-            <div class="text-center text-stone-400 p-4">
-              <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-              </svg>
-              <span class="text-sm">More photos coming soon</span>
-            </div>
+          <div class="aspect-square overflow-hidden rounded-xl">
+            <Image
+              src={gallery3}
+              alt="Two dogs running and playing together"
+              class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+              widths={[400, 600]}
+              sizes="(max-width: 768px) 50vw, 33vw"
+            />
+          </div>
+          <div class="aspect-square overflow-hidden rounded-xl">
+            <Image
+              src={gallery4}
+              alt="Black pomeranian enjoying the outdoors"
+              class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+              widths={[400, 600]}
+              sizes="(max-width: 768px) 50vw, 33vw"
+            />
+          </div>
+          <div class="aspect-square overflow-hidden rounded-xl">
+            <Image
+              src={gallery5}
+              alt="Labrador playing with ball at sunset"
+              class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+              widths={[400, 600]}
+              sizes="(max-width: 768px) 50vw, 33vw"
+            />
+          </div>
+          <div class="aspect-square overflow-hidden rounded-xl">
+            <Image
+              src={gallery6}
+              alt="Happy bulldog smiling by the pond"
+              class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+              widths={[400, 600]}
+              sizes="(max-width: 768px) 50vw, 33vw"
+            />
           </div>
         </div>
 
@@ -356,8 +402,8 @@ import dogWater from '../assets/images/profile_pic.jpg'
           <div class="relative">
             <div class="aspect-[4/3] rounded-2xl overflow-hidden">
               <Image
-                src={dogWater}
-                alt="Happy dog at Snuggles"
+                src={aboutImage}
+                alt="Happy dogs at Snuggles Pet Boarding"
                 class="w-full h-full object-cover"
                 widths={[400, 600, 800]}
                 sizes="(max-width: 768px) 100vw, 50vw"
@@ -396,6 +442,14 @@ import dogWater from '../assets/images/profile_pic.jpg'
                     </svg>
                   </div>
                   <span>(954) 907-7750</span>
+                </a>
+                <a href="mailto:snugglespetboarding@gmail.com" class="flex items-center gap-3 text-stone-600 hover:text-primary-600 transition-colors">
+                  <div class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                  </div>
+                  <span>snugglespetboarding@gmail.com</span>
                 </a>
                 <a href="https://maps.google.com/?q=4253+Pinewood+Rd+Melbourne+FL" target="_blank" rel="noopener" class="flex items-start gap-3 text-stone-600 hover:text-primary-600 transition-colors">
                   <div class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -437,7 +491,7 @@ import dogWater from '../assets/images/profile_pic.jpg'
           <!-- Map -->
           <div class="rounded-2xl overflow-hidden min-h-[400px]">
             <iframe
-              src="https://maps.google.com/maps?q=4253+Pinewood+Rd+Melbourne+FL&t=&z=15&ie=UTF8&iwloc=&output=embed"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1759.5!2d-80.7073!3d28.1536!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88de124b4c8f8e8f%3A0x8c8c8c8c8c8c8c8c!2s4253+Pinewood+Rd%2C+Melbourne%2C+FL!5e1!3m2!1sen!2sus!4v1706000000000!5m2!1sen!2sus"
               width="100%"
               height="400"
               style="border:0;"
