@@ -10,6 +10,7 @@ import {
   fetchUser,
   fetchUserBookings,
   addPet,
+  updatePet,
 } from '@/lib/api';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
@@ -21,10 +22,11 @@ import type { User, Pet, Booking } from '@/types';
 export default function MyAccountPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [showAddPetModal, setShowAddPetModal] = useState(false);
+  const [showPetModal, setShowPetModal] = useState(false);
+  const [editingPet, setEditingPet] = useState<Pet | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [cachedUser, setCachedUserState] = useState<User | null>(null);
-  const [newPetType, setNewPetType] = useState<string>('dog');
+  const [petFormType, setPetFormType] = useState<string>('dog');
 
   // Check auth on mount
   useEffect(() => {
@@ -61,16 +63,43 @@ export default function MyAccountPage() {
     mutationFn: addPet,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
-      setShowAddPetModal(false);
+      closePetModal();
     },
   });
 
-  const handleAddPet = async (e: React.FormEvent<HTMLFormElement>) => {
+  // Update pet mutation
+  const updatePetMutation = useMutation({
+    mutationFn: ({ petId, data }: { petId: string; data: Partial<Pet> }) => updatePet(petId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+      closePetModal();
+    },
+  });
+
+  const openAddPetModal = () => {
+    setEditingPet(null);
+    setPetFormType('dog');
+    setShowPetModal(true);
+  };
+
+  const openEditPetModal = (pet: Pet) => {
+    setEditingPet(pet);
+    setPetFormType(pet.type);
+    setShowPetModal(true);
+  };
+
+  const closePetModal = () => {
+    setShowPetModal(false);
+    setEditingPet(null);
+    setPetFormType('dog');
+  };
+
+  const handlePetSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const petType = formData.get('type') as Pet['type'];
 
-    const petData: Parameters<typeof addPet>[0] = {
+    const petData: Partial<Pet> = {
       name: formData.get('name') as string,
       type: petType,
       breed: formData.get('breed') as string || undefined,
@@ -81,22 +110,22 @@ export default function MyAccountPage() {
 
     // Add vaccine expiration dates for dogs
     if (petType === 'dog') {
-      const rabies = formData.get('vaccine_rabies_expires') as string;
-      const dhpp = formData.get('vaccine_dhpp_expires') as string;
-      const bordetella = formData.get('vaccine_bordetella_expires') as string;
-      const lepto = formData.get('vaccine_lepto_expires') as string;
-      const civ = formData.get('vaccine_civ_expires') as string;
-
-      if (rabies) petData.vaccine_rabies_expires = rabies;
-      if (dhpp) petData.vaccine_dhpp_expires = dhpp;
-      if (bordetella) petData.vaccine_bordetella_expires = bordetella;
-      if (lepto) petData.vaccine_lepto_expires = lepto;
-      if (civ) petData.vaccine_civ_expires = civ;
+      petData.vaccine_rabies_expires = formData.get('vaccine_rabies_expires') as string || undefined;
+      petData.vaccine_dhpp_expires = formData.get('vaccine_dhpp_expires') as string || undefined;
+      petData.vaccine_bordetella_expires = formData.get('vaccine_bordetella_expires') as string || undefined;
+      petData.vaccine_lepto_expires = formData.get('vaccine_lepto_expires') as string || undefined;
+      petData.vaccine_civ_expires = formData.get('vaccine_civ_expires') as string || undefined;
     }
 
-    await addPetMutation.mutateAsync(petData);
-    setNewPetType('dog'); // Reset for next time
+    if (editingPet) {
+      await updatePetMutation.mutateAsync({ petId: editingPet.id, data: petData });
+    } else {
+      await addPetMutation.mutateAsync(petData);
+    }
   };
+
+  const isPetMutationPending = addPetMutation.isPending || updatePetMutation.isPending;
+  const petMutationError = addPetMutation.error || updatePetMutation.error;
 
   // Show loading state
   if (isAuthenticated === null) {
@@ -200,7 +229,7 @@ export default function MyAccountPage() {
           </Link>
 
           <button
-            onClick={() => setShowAddPetModal(true)}
+            onClick={openAddPetModal}
             className="bg-white hover:bg-stone-50 border-2 border-stone-200 hover:border-primary-300 rounded-xl p-6 text-left transition-colors"
           >
             <div className="flex items-center gap-3">
@@ -265,7 +294,18 @@ export default function MyAccountPage() {
                         </p>
                       </div>
                     </div>
-                    <StatusBadge status={pet.status} />
+                    <div className="flex items-center gap-2">
+                      <StatusBadge status={pet.status} />
+                      <button
+                        onClick={() => openEditPetModal(pet)}
+                        className="p-2 text-stone-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                        title="Edit pet"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -297,26 +337,28 @@ export default function MyAccountPage() {
         </div>
       </main>
 
-      {/* Add Pet Modal */}
+      {/* Add/Edit Pet Modal */}
       <Modal
-        isOpen={showAddPetModal}
-        onClose={() => setShowAddPetModal(false)}
-        title="Add New Pet"
+        isOpen={showPetModal}
+        onClose={closePetModal}
+        title={editingPet ? 'Edit Pet' : 'Add New Pet'}
       >
-        <form onSubmit={handleAddPet} className="p-4 space-y-4">
+        <form onSubmit={handlePetSubmit} className="p-4 space-y-4">
           <Input
             label="Pet Name *"
             name="name"
             required
             placeholder="Buddy"
+            defaultValue={editingPet?.name || ''}
           />
 
           <Select
             label="Type *"
             name="type"
             required
-            value={newPetType}
-            onChange={(e) => setNewPetType(e.target.value)}
+            value={petFormType}
+            onChange={(e) => setPetFormType(e.target.value)}
+            disabled={!!editingPet}
           >
             <option value="dog">Dog</option>
             <option value="cat">Cat</option>
@@ -327,6 +369,7 @@ export default function MyAccountPage() {
             label="Breed"
             name="breed"
             placeholder="Golden Retriever"
+            defaultValue={editingPet?.breed || ''}
           />
 
           <div className="grid grid-cols-2 gap-4">
@@ -335,6 +378,7 @@ export default function MyAccountPage() {
               name="weight"
               type="number"
               placeholder="50"
+              defaultValue={editingPet?.weight?.toString() || ''}
             />
             <Input
               label="Age (years)"
@@ -342,6 +386,7 @@ export default function MyAccountPage() {
               type="number"
               step="0.5"
               placeholder="3"
+              defaultValue={editingPet?.age_years?.toString() || ''}
             />
           </div>
 
@@ -350,10 +395,11 @@ export default function MyAccountPage() {
             name="special_needs"
             rows={2}
             placeholder="Any medical conditions, dietary needs, etc."
+            defaultValue={editingPet?.special_needs || ''}
           />
 
           {/* Dog Vaccine Expiration Dates */}
-          {newPetType === 'dog' && (
+          {petFormType === 'dog' && (
             <div className="border-t border-stone-200 pt-4 mt-4">
               <h4 className="font-medium text-stone-800 mb-3">
                 Vaccine Expiration Dates
@@ -367,27 +413,32 @@ export default function MyAccountPage() {
                   label="Rabies"
                   name="vaccine_rabies_expires"
                   type="date"
+                  defaultValue={editingPet?.vaccine_rabies_expires || ''}
                 />
                 <Input
                   label="DHPP"
                   name="vaccine_dhpp_expires"
                   type="date"
+                  defaultValue={editingPet?.vaccine_dhpp_expires || ''}
                 />
                 <Input
                   label="Bordetella"
                   name="vaccine_bordetella_expires"
                   type="date"
+                  defaultValue={editingPet?.vaccine_bordetella_expires || ''}
                 />
                 <Input
                   label="Leptospirosis"
                   name="vaccine_lepto_expires"
                   type="date"
+                  defaultValue={editingPet?.vaccine_lepto_expires || ''}
                 />
                 <Input
                   label="CIV (Canine Influenza)"
                   name="vaccine_civ_expires"
                   type="date"
                   className="col-span-2"
+                  defaultValue={editingPet?.vaccine_civ_expires || ''}
                 />
               </div>
             </div>
@@ -396,14 +447,14 @@ export default function MyAccountPage() {
           <Button
             type="submit"
             className="w-full"
-            loading={addPetMutation.isPending}
+            loading={isPetMutationPending}
           >
-            Add Pet
+            {editingPet ? 'Save Changes' : 'Add Pet'}
           </Button>
 
-          {addPetMutation.isError && (
+          {petMutationError && (
             <p className="text-red-600 text-sm text-center">
-              {addPetMutation.error?.message || 'Failed to add pet'}
+              {petMutationError?.message || 'Failed to save pet'}
             </p>
           )}
         </form>

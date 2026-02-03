@@ -87,6 +87,27 @@ export async function addPet(petData: Partial<Pet>): Promise<{ pet: Pet }> {
   return response.json();
 }
 
+export async function updatePet(petId: string, petData: Partial<Pet>): Promise<{ pet: Pet }> {
+  const token = getAuthToken();
+  if (!token) throw new Error('Not authenticated');
+
+  const response = await fetch(`${API_URL}/api/me/pets/${petId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(petData),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to update pet');
+  }
+
+  return response.json();
+}
+
 export async function getGoogleAuthUrl(): Promise<string> {
   const callbackUrl = `${window.location.origin}/auth/callback`;
   const response = await fetch(`${API_URL}/api/auth/google?redirect_uri=${encodeURIComponent(callbackUrl)}`);
