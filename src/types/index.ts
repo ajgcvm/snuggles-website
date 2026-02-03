@@ -21,7 +21,17 @@ export interface DogVaccines {
   vaccine_civ_expires?: string;
 }
 
-export interface Pet extends DogVaccines {
+// Cat vaccine types (rabies and bordetella shared with dogs)
+export interface CatVaccines {
+  vaccine_rabies_expires?: string;
+  vaccine_bordetella_expires?: string;
+  vaccine_fvrcp_expires?: string;
+  vaccine_felv_expires?: string;
+  vaccine_chlamydia_expires?: string;
+  vaccine_fip_expires?: string;
+}
+
+export interface Pet extends DogVaccines, CatVaccines {
   id: string;
   name: string;
   type: 'dog' | 'cat' | 'bird' | 'other';

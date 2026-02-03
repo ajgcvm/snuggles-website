@@ -117,6 +117,16 @@ export default function MyAccountPage() {
       petData.vaccine_civ_expires = formData.get('vaccine_civ_expires') as string || undefined;
     }
 
+    // Add vaccine expiration dates for cats
+    if (petType === 'cat') {
+      petData.vaccine_rabies_expires = formData.get('vaccine_rabies_expires') as string || undefined;
+      petData.vaccine_fvrcp_expires = formData.get('vaccine_fvrcp_expires') as string || undefined;
+      petData.vaccine_felv_expires = formData.get('vaccine_felv_expires') as string || undefined;
+      petData.vaccine_bordetella_expires = formData.get('vaccine_bordetella_expires') as string || undefined;
+      petData.vaccine_chlamydia_expires = formData.get('vaccine_chlamydia_expires') as string || undefined;
+      petData.vaccine_fip_expires = formData.get('vaccine_fip_expires') as string || undefined;
+    }
+
     if (editingPet) {
       await updatePetMutation.mutateAsync({ petId: editingPet.id, data: petData });
     } else {
@@ -439,6 +449,57 @@ export default function MyAccountPage() {
                   type="date"
                   className="col-span-2"
                   defaultValue={editingPet?.vaccine_civ_expires || ''}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Cat Vaccine Expiration Dates */}
+          {petFormType === 'cat' && (
+            <div className="border-t border-stone-200 pt-4 mt-4">
+              <h4 className="font-medium text-stone-800 mb-3">
+                Vaccine Expiration Dates
+                <span className="text-sm font-normal text-stone-500 ml-2">(optional)</span>
+              </h4>
+              <p className="text-xs text-stone-500 mb-3">
+                All cats must be up-to-date on vaccines before boarding. You can add these later.
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  label="FVRCP"
+                  name="vaccine_fvrcp_expires"
+                  type="date"
+                  defaultValue={editingPet?.vaccine_fvrcp_expires || ''}
+                />
+                <Input
+                  label="Rabies"
+                  name="vaccine_rabies_expires"
+                  type="date"
+                  defaultValue={editingPet?.vaccine_rabies_expires || ''}
+                />
+                <Input
+                  label="FeLV (Leukemia)"
+                  name="vaccine_felv_expires"
+                  type="date"
+                  defaultValue={editingPet?.vaccine_felv_expires || ''}
+                />
+                <Input
+                  label="Bordetella"
+                  name="vaccine_bordetella_expires"
+                  type="date"
+                  defaultValue={editingPet?.vaccine_bordetella_expires || ''}
+                />
+                <Input
+                  label="Chlamydia"
+                  name="vaccine_chlamydia_expires"
+                  type="date"
+                  defaultValue={editingPet?.vaccine_chlamydia_expires || ''}
+                />
+                <Input
+                  label="FIP"
+                  name="vaccine_fip_expires"
+                  type="date"
+                  defaultValue={editingPet?.vaccine_fip_expires || ''}
                 />
               </div>
             </div>
