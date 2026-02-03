@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter, Playfair_Display } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/react';
 import './globals.css';
 import { Providers } from './providers';
 
@@ -53,6 +54,7 @@ export default function RootLayout({
         className={`${inter.variable} ${playfair.variable} bg-stone-50 text-stone-800 font-sans antialiased`}
       >
         <Providers>{children}</Providers>
+        <Analytics />
       </body>
     </html>
   );
