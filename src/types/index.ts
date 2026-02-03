@@ -62,6 +62,8 @@ export interface NewPet {
   specialNeeds: string;
 }
 
+export type PaymentStatus = 'pending_payment' | 'paid' | 'payment_expired' | 'refunded' | 'partially_refunded';
+
 export interface Booking {
   id: string;
   service: 'boarding' | 'daycare';
@@ -81,6 +83,14 @@ export interface Booking {
   requires_meet_greet?: boolean;
   meet_greet_scheduled?: string;
   meet_greet_completed?: boolean;
+  // Payment fields
+  payment_status?: PaymentStatus;
+  stripe_session_id?: string;
+  stripe_payment_intent_id?: string;
+  payment_link?: string;
+  payment_amount?: number;
+  paid_at?: string;
+  payment_line_items?: string;
 }
 
 export interface BookingState {

@@ -249,6 +249,30 @@ export function ReviewStep({ onSuccess }: ReviewStepProps) {
         </div>
       </div>
 
+      {/* Refund Policy */}
+      <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 mb-6">
+        <h3 className="font-medium text-stone-800 mb-2 flex items-center gap-2">
+          <svg className="w-4 h-4 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Cancellation Policy
+        </h3>
+        <ul className="text-sm text-stone-600 space-y-1">
+          <li className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+            <span><strong>100% refund</strong> if cancelled 3+ days before check-in</span>
+          </li>
+          <li className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+            <span><strong>50% refund</strong> if cancelled within 3 days of check-in</span>
+          </li>
+          <li className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+            <span><strong>No refund</strong> if cancelled on the day of check-in</span>
+          </li>
+        </ul>
+      </div>
+
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
           <p className="text-red-700">{error}</p>

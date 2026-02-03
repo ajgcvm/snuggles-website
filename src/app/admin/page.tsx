@@ -11,10 +11,13 @@ import {
   adminUpdateClient,
   adminFetchPets,
   adminUpdatePet,
+  adminFetchStripeProducts,
+  adminSendPaymentRequest,
   getAuthToken,
   getCachedUser,
   clearAuth,
 } from '@/lib/api';
+import type { StripeProduct, PaymentLineItem } from '@/lib/api';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { StatusBadge } from '@/components/ui/Badge';
@@ -1331,6 +1334,13 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
 
+  // Payment state
+  const [stripeProducts, setStripeProducts] = useState<StripeProduct[]>([]);
+  const [lineItems, setLineItems] = useState<Array<{ priceId: string; quantity: number; productName: string; unitAmount: number }>>([]);
+  const [loadingProducts, setLoadingProducts] = useState(false);
+  const [sendingPayment, setSendingPayment] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
+
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '-';
     const date = new Date(dateStr + 'T00:00:00');
@@ -1340,6 +1350,88 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
   const showSuccess = (message: string) => {
     setSaveSuccess(message);
     setTimeout(() => setSaveSuccess(null), 2000);
+  };
+
+  // Load Stripe products when payment section is shown
+  const loadStripeProducts = async () => {
+    if (stripeProducts.length > 0) return; // Already loaded
+    setLoadingProducts(true);
+    try {
+      const data = await adminFetchStripeProducts(authHeader);
+      setStripeProducts(data.products);
+    } catch (error) {
+      console.error('Error loading products:', error);
+    } finally {
+      setLoadingProducts(false);
+    }
+  };
+
+  const addLineItem = (product: StripeProduct) => {
+    const price = product.prices[0];
+    if (!price) return;
+
+    const existing = lineItems.find(item => item.priceId === price.id);
+    if (existing) {
+      setLineItems(lineItems.map(item =>
+        item.priceId === price.id
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      ));
+    } else {
+      setLineItems([...lineItems, {
+        priceId: price.id,
+        quantity: 1,
+        productName: product.name,
+        unitAmount: price.unit_amount,
+      }]);
+    }
+  };
+
+  const updateLineItemQuantity = (priceId: string, quantity: number) => {
+    if (quantity <= 0) {
+      setLineItems(lineItems.filter(item => item.priceId !== priceId));
+    } else {
+      setLineItems(lineItems.map(item =>
+        item.priceId === priceId
+          ? { ...item, quantity }
+          : item
+      ));
+    }
+  };
+
+  const removeLineItem = (priceId: string) => {
+    setLineItems(lineItems.filter(item => item.priceId !== priceId));
+  };
+
+  const calculateTotal = () => {
+    return lineItems.reduce((sum, item) => sum + (item.unitAmount * item.quantity), 0);
+  };
+
+  const handleSendPaymentRequest = async () => {
+    if (lineItems.length === 0) {
+      setPaymentError('Please add at least one item');
+      return;
+    }
+
+    setSendingPayment(true);
+    setPaymentError(null);
+
+    try {
+      const items: PaymentLineItem[] = lineItems.map(item => ({
+        price: item.priceId,
+        quantity: item.quantity,
+      }));
+
+      await adminSendPaymentRequest(authHeader, booking.id, items);
+      showSuccess('Payment request sent!');
+      setLineItems([]);
+      onRefresh();
+    } catch (error) {
+      console.error('Error sending payment:', error);
+      setPaymentError(error instanceof Error ? error.message : 'Failed to send payment request');
+    } finally {
+      setSendingPayment(false);
+    }
   };
 
   const handleSaveFinalPrice = async () => {
@@ -1572,6 +1664,187 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
           </div>
         </div>
       </div>
+
+      {/* Payment Section */}
+      {(booking.status === 'confirmed' || booking.status === 'pending' || booking.status === 'pending_meetgreet') && (
+        <div className="bg-white rounded-lg border border-stone-200 overflow-hidden">
+          <button
+            onClick={loadStripeProducts}
+            className="w-full px-4 py-3 flex items-center justify-between bg-stone-50 hover:bg-stone-100 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
+              <span className="font-medium text-stone-800">Payment</span>
+              {booking.payment_status && (
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                  booking.payment_status === 'paid' ? 'bg-green-100 text-green-700' :
+                  booking.payment_status === 'payment_expired' ? 'bg-red-100 text-red-700' :
+                  booking.payment_status === 'refunded' ? 'bg-stone-100 text-stone-600' :
+                  'bg-amber-100 text-amber-700'
+                }`}>
+                  {booking.payment_status === 'paid' ? 'Paid' :
+                   booking.payment_status === 'payment_expired' ? 'Expired' :
+                   booking.payment_status === 'refunded' ? 'Refunded' :
+                   booking.payment_status === 'partially_refunded' ? 'Partial Refund' :
+                   'Awaiting Payment'}
+                </span>
+              )}
+            </div>
+            <svg className="w-5 h-5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {/* Payment Details - Show if products loaded */}
+          {stripeProducts.length > 0 && (
+            <div className="p-4 border-t border-stone-200">
+              {/* Payment Status Info */}
+              {booking.payment_status === 'paid' && booking.paid_at && (
+                <div className="bg-green-50 rounded-lg p-3 mb-4">
+                  <p className="text-sm text-green-800">
+                    <span className="font-medium">Paid:</span> ${((booking.payment_amount || 0) / 100).toFixed(2)} on{' '}
+                    {new Date(booking.paid_at).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+                  </p>
+                </div>
+              )}
+
+              {booking.payment_status === 'payment_expired' && (
+                <div className="bg-red-50 rounded-lg p-3 mb-4">
+                  <p className="text-sm text-red-800">
+                    Payment link expired. You can send a new payment request below.
+                  </p>
+                </div>
+              )}
+
+              {booking.payment_link && booking.payment_status === 'pending_payment' && (
+                <div className="bg-amber-50 rounded-lg p-3 mb-4">
+                  <p className="text-sm text-amber-800 mb-2">
+                    <span className="font-medium">Payment link sent.</span> Waiting for client to pay.
+                  </p>
+                  <a
+                    href={booking.payment_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-primary-600 hover:underline break-all"
+                  >
+                    {booking.payment_link}
+                  </a>
+                </div>
+              )}
+
+              {/* Product Selector */}
+              {(!booking.payment_status || booking.payment_status === 'pending_payment' && !booking.payment_link || booking.payment_status === 'payment_expired') && (
+                <>
+                  <h4 className="text-sm font-medium text-stone-700 mb-2">Add Items to Invoice</h4>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
+                    {stripeProducts.map((product) => (
+                      <button
+                        key={product.id}
+                        onClick={() => addLineItem(product)}
+                        className="text-left p-2 rounded-lg border border-stone-200 hover:border-primary-300 hover:bg-primary-50 transition-colors text-sm"
+                      >
+                        <span className="block font-medium text-stone-800 truncate">{product.name}</span>
+                        <span className="text-stone-500">
+                          ${((product.prices[0]?.unit_amount || 0) / 100).toFixed(2)}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Line Items */}
+                  {lineItems.length > 0 && (
+                    <div className="bg-stone-50 rounded-lg p-3 mb-4">
+                      <h4 className="text-sm font-medium text-stone-700 mb-2">Invoice Items</h4>
+                      <div className="space-y-2">
+                        {lineItems.map((item) => (
+                          <div key={item.priceId} className="flex items-center justify-between">
+                            <span className="text-sm text-stone-700">{item.productName}</span>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => updateLineItemQuantity(item.priceId, item.quantity - 1)}
+                                className="w-6 h-6 rounded bg-stone-200 hover:bg-stone-300 flex items-center justify-center text-stone-600"
+                              >
+                                -
+                              </button>
+                              <span className="w-8 text-center text-sm">{item.quantity}</span>
+                              <button
+                                onClick={() => updateLineItemQuantity(item.priceId, item.quantity + 1)}
+                                className="w-6 h-6 rounded bg-stone-200 hover:bg-stone-300 flex items-center justify-center text-stone-600"
+                              >
+                                +
+                              </button>
+                              <span className="w-16 text-right text-sm font-medium">
+                                ${((item.unitAmount * item.quantity) / 100).toFixed(2)}
+                              </span>
+                              <button
+                                onClick={() => removeLineItem(item.priceId)}
+                                className="text-red-500 hover:text-red-700 ml-1"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-3 pt-3 border-t border-stone-200 flex items-center justify-between">
+                        <span className="font-medium text-stone-800">Total</span>
+                        <span className="text-lg font-bold text-primary-700">
+                          ${(calculateTotal() / 100).toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {paymentError && (
+                    <div className="bg-red-50 rounded-lg p-3 mb-4">
+                      <p className="text-sm text-red-700">{paymentError}</p>
+                    </div>
+                  )}
+
+                  <Button
+                    onClick={handleSendPaymentRequest}
+                    disabled={sendingPayment || lineItems.length === 0}
+                    size="sm"
+                    className="w-full"
+                  >
+                    {sendingPayment ? (
+                      <>
+                        <svg className="w-4 h-4 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        Send Payment Request
+                      </>
+                    )}
+                  </Button>
+                </>
+              )}
+
+              {loadingProducts && (
+                <div className="flex items-center justify-center py-4">
+                  <div className="animate-spin w-5 h-5 border-2 border-primary-600 border-t-transparent rounded-full"></div>
+                  <span className="ml-2 text-sm text-stone-500">Loading products...</span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Client Info */}
       <div className="bg-stone-50 rounded-lg p-4">

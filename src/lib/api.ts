@@ -298,3 +298,53 @@ export async function adminUpdatePet(
   if (!response.ok) throw new Error('Failed to update pet');
   return response.json();
 }
+
+// Stripe Payment APIs
+export interface StripeProduct {
+  id: string;
+  name: string;
+  description?: string;
+  prices: Array<{
+    id: string;
+    unit_amount: number;
+    currency: string;
+  }>;
+}
+
+export interface PaymentLineItem {
+  price: string;
+  quantity: number;
+}
+
+export async function adminFetchStripeProducts(
+  authHeader: string
+): Promise<{ products: StripeProduct[] }> {
+  const response = await fetch(`${API_URL}/api/admin/stripe/products`, {
+    headers: { Authorization: authHeader },
+  });
+
+  if (!response.ok) throw new Error('Failed to fetch products');
+  return response.json();
+}
+
+export async function adminSendPaymentRequest(
+  authHeader: string,
+  bookingId: string,
+  lineItems: PaymentLineItem[]
+): Promise<{ sessionId: string; paymentLink: string }> {
+  const response = await fetch(`${API_URL}/api/admin/bookings/${bookingId}/payment`, {
+    method: 'POST',
+    headers: {
+      Authorization: authHeader,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ lineItems }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to send payment request');
+  }
+
+  return response.json();
+}
