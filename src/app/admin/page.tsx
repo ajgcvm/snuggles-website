@@ -1358,9 +1358,9 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
     setLoadingProducts(true);
     try {
       const data = await adminFetchStripeProducts(authHeader);
-      // Filter out products without valid prices
+      // Filter out products without valid prices (supports both flat and array format)
       const validProducts = (data.products || []).filter(
-        (p) => p.prices && p.prices.length > 0 && p.prices[0]?.unit_amount != null
+        (p) => (p.price_id && p.unit_amount != null) || (p.prices && p.prices.length > 0 && p.prices[0]?.unit_amount != null)
       );
       setStripeProducts(validProducts);
     } catch (error) {
@@ -1370,10 +1370,20 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
     }
   };
 
+  // Helper to get price info from product (supports both flat and array format)
+  const getProductPrice = (product: StripeProduct) => {
+    if (product.price_id && product.unit_amount != null) {
+      return { id: product.price_id, unit_amount: product.unit_amount };
+    }
+    if (product.prices && product.prices[0]) {
+      return { id: product.prices[0].id, unit_amount: product.prices[0].unit_amount };
+    }
+    return null;
+  };
+
   const addLineItem = (product: StripeProduct) => {
-    if (!product.prices || !product.prices[0]) return;
-    const price = product.prices[0];
-    if (!price || price.unit_amount == null) return;
+    const price = getProductPrice(product);
+    if (!price) return;
 
     const existing = lineItems.find(item => item.priceId === price.id);
     if (existing) {
@@ -1748,18 +1758,21 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
                 <>
                   <h4 className="text-sm font-medium text-stone-700 mb-2">Add Items to Invoice</h4>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
-                    {stripeProducts.map((product) => (
-                      <button
-                        key={product.id}
-                        onClick={() => addLineItem(product)}
-                        className="text-left p-2 rounded-lg border border-stone-200 hover:border-primary-300 hover:bg-primary-50 transition-colors text-sm"
-                      >
-                        <span className="block font-medium text-stone-800 truncate">{product.name}</span>
-                        <span className="text-stone-500">
-                          ${((product.prices[0]?.unit_amount || 0) / 100).toFixed(2)}
-                        </span>
-                      </button>
-                    ))}
+                    {stripeProducts.map((product) => {
+                      const price = getProductPrice(product);
+                      return (
+                        <button
+                          key={product.id}
+                          onClick={() => addLineItem(product)}
+                          className="text-left p-2 rounded-lg border border-stone-200 hover:border-primary-300 hover:bg-primary-50 transition-colors text-sm"
+                        >
+                          <span className="block font-medium text-stone-800 truncate">{product.name}</span>
+                          <span className="text-stone-500">
+                            ${((price?.unit_amount || 0) / 100).toFixed(2)}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
 
                   {/* Line Items */}

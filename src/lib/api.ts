@@ -304,7 +304,12 @@ export interface StripeProduct {
   id: string;
   name: string;
   description?: string;
-  prices: Array<{
+  // Flat format from API
+  price_id?: string;
+  unit_amount?: number;
+  currency?: string;
+  // Array format (legacy)
+  prices?: Array<{
     id: string;
     unit_amount: number;
     currency: string;
