@@ -1358,7 +1358,11 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
     setLoadingProducts(true);
     try {
       const data = await adminFetchStripeProducts(authHeader);
-      setStripeProducts(data.products);
+      // Filter out products without valid prices
+      const validProducts = (data.products || []).filter(
+        (p) => p.prices && p.prices.length > 0 && p.prices[0]?.unit_amount != null
+      );
+      setStripeProducts(validProducts);
     } catch (error) {
       console.error('Error loading products:', error);
     } finally {
@@ -1367,8 +1371,9 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
   };
 
   const addLineItem = (product: StripeProduct) => {
+    if (!product.prices || !product.prices[0]) return;
     const price = product.prices[0];
-    if (!price) return;
+    if (!price || price.unit_amount == null) return;
 
     const existing = lineItems.find(item => item.priceId === price.id);
     if (existing) {
