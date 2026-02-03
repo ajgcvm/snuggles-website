@@ -24,6 +24,7 @@ export default function MyAccountPage() {
   const [showAddPetModal, setShowAddPetModal] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [cachedUser, setCachedUserState] = useState<User | null>(null);
+  const [newPetType, setNewPetType] = useState<string>('dog');
 
   // Check auth on mount
   useEffect(() => {
@@ -67,15 +68,34 @@ export default function MyAccountPage() {
   const handleAddPet = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    const petType = formData.get('type') as Pet['type'];
 
-    await addPetMutation.mutateAsync({
+    const petData: Parameters<typeof addPet>[0] = {
       name: formData.get('name') as string,
-      type: formData.get('type') as Pet['type'],
+      type: petType,
       breed: formData.get('breed') as string || undefined,
       weight: formData.get('weight') ? parseFloat(formData.get('weight') as string) : undefined,
       age_years: formData.get('age_years') ? parseFloat(formData.get('age_years') as string) : undefined,
       special_needs: formData.get('special_needs') as string || undefined,
-    });
+    };
+
+    // Add vaccine expiration dates for dogs
+    if (petType === 'dog') {
+      const rabies = formData.get('vaccine_rabies_expires') as string;
+      const dhpp = formData.get('vaccine_dhpp_expires') as string;
+      const bordetella = formData.get('vaccine_bordetella_expires') as string;
+      const lepto = formData.get('vaccine_lepto_expires') as string;
+      const civ = formData.get('vaccine_civ_expires') as string;
+
+      if (rabies) petData.vaccine_rabies_expires = rabies;
+      if (dhpp) petData.vaccine_dhpp_expires = dhpp;
+      if (bordetella) petData.vaccine_bordetella_expires = bordetella;
+      if (lepto) petData.vaccine_lepto_expires = lepto;
+      if (civ) petData.vaccine_civ_expires = civ;
+    }
+
+    await addPetMutation.mutateAsync(petData);
+    setNewPetType('dog'); // Reset for next time
   };
 
   // Show loading state
@@ -291,7 +311,13 @@ export default function MyAccountPage() {
             placeholder="Buddy"
           />
 
-          <Select label="Type *" name="type" required>
+          <Select
+            label="Type *"
+            name="type"
+            required
+            value={newPetType}
+            onChange={(e) => setNewPetType(e.target.value)}
+          >
             <option value="dog">Dog</option>
             <option value="cat">Cat</option>
             <option value="other">Other</option>
@@ -325,6 +351,47 @@ export default function MyAccountPage() {
             rows={2}
             placeholder="Any medical conditions, dietary needs, etc."
           />
+
+          {/* Dog Vaccine Expiration Dates */}
+          {newPetType === 'dog' && (
+            <div className="border-t border-stone-200 pt-4 mt-4">
+              <h4 className="font-medium text-stone-800 mb-3">
+                Vaccine Expiration Dates
+                <span className="text-sm font-normal text-stone-500 ml-2">(optional)</span>
+              </h4>
+              <p className="text-xs text-stone-500 mb-3">
+                All dogs must be up-to-date on vaccines before boarding. You can add these later.
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  label="Rabies"
+                  name="vaccine_rabies_expires"
+                  type="date"
+                />
+                <Input
+                  label="DHPP"
+                  name="vaccine_dhpp_expires"
+                  type="date"
+                />
+                <Input
+                  label="Bordetella"
+                  name="vaccine_bordetella_expires"
+                  type="date"
+                />
+                <Input
+                  label="Leptospirosis"
+                  name="vaccine_lepto_expires"
+                  type="date"
+                />
+                <Input
+                  label="CIV (Canine Influenza)"
+                  name="vaccine_civ_expires"
+                  type="date"
+                  className="col-span-2"
+                />
+              </div>
+            </div>
+          )}
 
           <Button
             type="submit"

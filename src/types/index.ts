@@ -12,7 +12,16 @@ export interface User {
   isPlatformAdmin?: boolean;
 }
 
-export interface Pet {
+// Dog vaccine types
+export interface DogVaccines {
+  vaccine_rabies_expires?: string;
+  vaccine_dhpp_expires?: string;
+  vaccine_bordetella_expires?: string;
+  vaccine_lepto_expires?: string;
+  vaccine_civ_expires?: string;
+}
+
+export interface Pet extends DogVaccines {
   id: string;
   name: string;
   type: 'dog' | 'cat' | 'bird' | 'other';
