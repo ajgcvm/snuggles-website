@@ -137,6 +137,31 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* By Appointment Only Banner */}
+        <section className="bg-amber-500 py-4">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-center">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-amber-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span className="font-bold text-amber-900 text-lg">By Appointment Only</span>
+              </div>
+              <span className="text-amber-800">
+                Please schedule your visit in advance.{' '}
+                <a
+                  href={SITE_CONFIG.calendlyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline font-medium hover:text-amber-900"
+                >
+                  Book a Meet & Greet
+                </a>
+              </span>
+            </div>
+          </div>
+        </section>
+
         {/* Services Section */}
         <section id="services" className="py-20 md:py-28 bg-white">
           <div className="max-w-6xl mx-auto px-4">
