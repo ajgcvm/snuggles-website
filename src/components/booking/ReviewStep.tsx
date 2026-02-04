@@ -248,7 +248,7 @@ export function ReviewStep({ onSuccess }: ReviewStepProps) {
               <div className="animate-pulse bg-stone-200 h-8 w-24 rounded"></div>
             ) : (
               <span className="text-2xl font-bold text-primary-700">
-                ${estimate?.total || '—'}
+                ${estimate?.total != null ? estimate.total : '—'}
               </span>
             )}
           </div>
