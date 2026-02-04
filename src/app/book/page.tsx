@@ -32,16 +32,15 @@ export default function BookPage() {
         try {
           const data = await fetchUser();
           console.log('fetchUser response:', data);
+          console.log('pets from API:', data.pets);
           setAuth(token, data.client, data.pets || []);
         } catch (error) {
           console.error('fetchUser error:', error);
           // Not logged in or error, continue as guest
           setAuth(null, null, []);
         }
-      } else if (cachedUser) {
-        // Use cached data
-        setAuth(token, cachedUser, []);
       } else {
+        // No token - continue as guest
         setAuth(null, null, []);
       }
 
