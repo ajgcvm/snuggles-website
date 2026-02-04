@@ -1792,14 +1792,14 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
                 booking.payment_status === 'paid' ? 'bg-green-100 text-green-700' :
                 booking.payment_status === 'payment_expired' ? 'bg-red-100 text-red-700' :
                 booking.payment_status === 'refunded' ? 'bg-stone-100 text-stone-600' :
-                booking.payment_status === 'pending_payment' ? 'bg-amber-100 text-amber-700' :
+                (booking.payment_status === 'pending_payment' && booking.payment_link) ? 'bg-amber-100 text-amber-700' :
                 'bg-stone-100 text-stone-500'
               }`}>
                 {booking.payment_status === 'paid' ? 'Paid' :
                  booking.payment_status === 'payment_expired' ? 'Expired' :
                  booking.payment_status === 'refunded' ? 'Refunded' :
                  booking.payment_status === 'partially_refunded' ? 'Partial Refund' :
-                 booking.payment_status === 'pending_payment' ? 'Awaiting Payment' :
+                 (booking.payment_status === 'pending_payment' && booking.payment_link) ? 'Awaiting Payment' :
                  'Not Configured'}
               </span>
             </div>
