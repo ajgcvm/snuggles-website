@@ -402,3 +402,92 @@ export async function adminProcessRefund(
 
   return response.json();
 }
+
+// Calendar API types
+export interface CalendarDayData {
+  check_ins: number;
+  check_outs: number;
+  meet_greets: number;
+  occupancy: number;
+  capacity: number;
+}
+
+export interface CalendarMonthResponse {
+  year: number;
+  month: number;
+  total_capacity: number;
+  days: Record<string, CalendarDayData>;
+}
+
+export interface CalendarCheckIn {
+  booking_id: string;
+  booking_number: number;
+  check_out: string;
+  status: string;
+  client_name: string;
+  pet_name: string;
+  pet_type: string;
+  pet_breed?: string;
+  pet_weight?: number;
+  size?: string;
+}
+
+export interface CalendarCheckOut {
+  booking_id: string;
+  booking_number: number;
+  check_in: string;
+  status: string;
+  client_name: string;
+  pet_name: string;
+  pet_type: string;
+  size?: string;
+}
+
+export interface CalendarMeetGreet {
+  id: string;
+  time: string;
+  client_name: string;
+  client_email: string;
+  pet_info?: string;
+  status: string;
+}
+
+export interface CalendarDayDetailResponse {
+  date: string;
+  occupancy: {
+    total: number;
+    capacity: number;
+    by_size: Record<string, { used: number; total: number }>;
+  };
+  check_ins: CalendarCheckIn[];
+  check_outs: CalendarCheckOut[];
+  meet_greets: CalendarMeetGreet[];
+}
+
+// Calendar API functions
+export async function adminFetchCalendarMonth(
+  authHeader: string,
+  year: number,
+  month: number
+): Promise<CalendarMonthResponse> {
+  const response = await fetch(
+    `${API_URL}/api/admin/calendar?year=${year}&month=${month}`,
+    { headers: { Authorization: authHeader } }
+  );
+
+  if (!response.ok) throw new Error('Failed to fetch calendar');
+  return response.json();
+}
+
+export async function adminFetchCalendarDay(
+  authHeader: string,
+  date: string
+): Promise<CalendarDayDetailResponse> {
+  const response = await fetch(
+    `${API_URL}/api/admin/calendar/day?date=${date}`,
+    { headers: { Authorization: authHeader } }
+  );
+
+  if (!response.ok) throw new Error('Failed to fetch day details');
+  return response.json();
+}

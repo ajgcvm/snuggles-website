@@ -14,9 +14,16 @@ import {
   adminFetchStripeProducts,
   adminSendPaymentRequest,
   adminProcessRefund,
+  adminFetchCalendarMonth,
+  adminFetchCalendarDay,
   getAuthToken,
   getCachedUser,
   clearAuth,
+} from '@/lib/api';
+import type {
+  CalendarMonthResponse,
+  CalendarDayDetailResponse,
+  CalendarDayData,
 } from '@/lib/api';
 import type { StripeProduct, PaymentLineItem } from '@/lib/api';
 import { Modal } from '@/components/ui/Modal';
@@ -24,7 +31,7 @@ import { Button } from '@/components/ui/Button';
 import { StatusBadge } from '@/components/ui/Badge';
 import type { Booking, AdminStats, AdminClient, AdminPet, User } from '@/types';
 
-type Section = 'dashboard' | 'bookings' | 'clients' | 'pets';
+type Section = 'dashboard' | 'calendar' | 'bookings' | 'clients' | 'pets';
 
 export default function AdminPage() {
   const [authHeader, setAuthHeader] = useState<string | null>(null);
@@ -141,11 +148,20 @@ export default function AdminPage() {
       ),
     },
     {
+      id: 'calendar',
+      label: 'Calendar',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      ),
+    },
+    {
       id: 'bookings',
       label: 'Bookings',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
         </svg>
       ),
     },
@@ -296,6 +312,9 @@ export default function AdminPage() {
               onNavigateToPets={navigateToPets}
               onNavigateToClients={navigateToClients}
             />
+          )}
+          {activeSection === 'calendar' && (
+            <CalendarSection authHeader={authHeader} />
           )}
           {activeSection === 'bookings' && (
             <BookingsSection
@@ -477,6 +496,438 @@ function DashboardSection({
           <p className="text-xs text-stone-400 mt-2 group-hover:text-purple-600">Click to schedule →</p>
         </button>
       </div>
+    </div>
+  );
+}
+
+// ===================
+// CALENDAR SECTION
+// ===================
+
+function CalendarSection({ authHeader }: { authHeader: string }) {
+  const [calendarData, setCalendarData] = useState<CalendarMonthResponse | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [dayDetail, setDayDetail] = useState<CalendarDayDetailResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [dayLoading, setDayLoading] = useState(false);
+
+  // Current month state
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
+
+  useEffect(() => {
+    loadCalendarMonth();
+  }, [authHeader, currentYear, currentMonth]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const loadCalendarMonth = async () => {
+    setLoading(true);
+    try {
+      const data = await adminFetchCalendarMonth(authHeader, currentYear, currentMonth);
+      setCalendarData(data);
+    } catch (error) {
+      console.error('Error loading calendar:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadDayDetail = async (date: string) => {
+    setSelectedDate(date);
+    setDayLoading(true);
+    try {
+      const data = await adminFetchCalendarDay(authHeader, date);
+      setDayDetail(data);
+    } catch (error) {
+      console.error('Error loading day detail:', error);
+    } finally {
+      setDayLoading(false);
+    }
+  };
+
+  const goToPreviousMonth = () => {
+    if (currentMonth === 1) {
+      setCurrentMonth(12);
+      setCurrentYear(currentYear - 1);
+    } else {
+      setCurrentMonth(currentMonth - 1);
+    }
+    setSelectedDate(null);
+    setDayDetail(null);
+  };
+
+  const goToNextMonth = () => {
+    if (currentMonth === 12) {
+      setCurrentMonth(1);
+      setCurrentYear(currentYear + 1);
+    } else {
+      setCurrentMonth(currentMonth + 1);
+    }
+    setSelectedDate(null);
+    setDayDetail(null);
+  };
+
+  const goToToday = () => {
+    const today = new Date();
+    setCurrentYear(today.getFullYear());
+    setCurrentMonth(today.getMonth() + 1);
+    setSelectedDate(null);
+    setDayDetail(null);
+  };
+
+  // Generate calendar grid
+  const generateCalendarDays = () => {
+    const firstDay = new Date(currentYear, currentMonth - 1, 1);
+    const lastDay = new Date(currentYear, currentMonth, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay(); // 0 = Sunday
+
+    const days: { date: string | null; data: CalendarDayData | null }[] = [];
+
+    // Add empty cells for days before the first of the month
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      days.push({ date: null, data: null });
+    }
+
+    // Add actual days
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateStr = `${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const dayData = calendarData?.days[dateStr] || null;
+      days.push({ date: dateStr, data: dayData });
+    }
+
+    return days;
+  };
+
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  const isToday = (dateStr: string) => {
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    return dateStr === todayStr;
+  };
+
+  const getOccupancyColor = (occupancy: number, capacity: number) => {
+    const percentage = capacity > 0 ? (occupancy / capacity) * 100 : 0;
+    if (percentage >= 90) return 'bg-red-500';
+    if (percentage >= 70) return 'bg-amber-500';
+    if (percentage >= 50) return 'bg-yellow-500';
+    return 'bg-green-500';
+  };
+
+  if (loading) {
+    return <div className="animate-pulse text-stone-500">Loading calendar...</div>;
+  }
+
+  const calendarDays = generateCalendarDays();
+
+  return (
+    <div className="flex flex-col lg:flex-row gap-6">
+      {/* Calendar Grid */}
+      <div className="flex-1">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold text-stone-800">Calendar</h1>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={goToToday}
+              className="px-3 py-1.5 text-sm font-medium text-stone-600 hover:text-stone-800 hover:bg-stone-100 rounded-lg transition-colors"
+            >
+              Today
+            </button>
+            <button
+              onClick={goToPreviousMonth}
+              className="p-2 hover:bg-stone-100 rounded-lg transition-colors"
+            >
+              <svg className="w-5 h-5 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <span className="text-lg font-semibold text-stone-800 min-w-[180px] text-center">
+              {monthNames[currentMonth - 1]} {currentYear}
+            </span>
+            <button
+              onClick={goToNextMonth}
+              className="p-2 hover:bg-stone-100 rounded-lg transition-colors"
+            >
+              <svg className="w-5 h-5 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Legend */}
+        <div className="flex flex-wrap gap-4 mb-4 text-sm">
+          <div className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full bg-blue-500"></span>
+            <span className="text-stone-600">Check-ins</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full bg-orange-500"></span>
+            <span className="text-stone-600">Check-outs</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full bg-purple-500"></span>
+            <span className="text-stone-600">Meet & Greets</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded bg-green-500"></span>
+            <span className="text-stone-600">Low occupancy</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded bg-red-500"></span>
+            <span className="text-stone-600">High occupancy</span>
+          </div>
+        </div>
+
+        {/* Calendar Grid */}
+        <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
+          {/* Day headers */}
+          <div className="grid grid-cols-7 bg-stone-50 border-b border-stone-200">
+            {dayNames.map((day) => (
+              <div key={day} className="py-3 text-center text-sm font-medium text-stone-500">
+                {day}
+              </div>
+            ))}
+          </div>
+
+          {/* Calendar cells */}
+          <div className="grid grid-cols-7">
+            {calendarDays.map((day, index) => (
+              <button
+                key={index}
+                disabled={!day.date}
+                onClick={() => day.date && loadDayDetail(day.date)}
+                className={`
+                  min-h-[100px] p-2 border-b border-r border-stone-100 text-left
+                  ${!day.date ? 'bg-stone-50' : 'hover:bg-stone-50 cursor-pointer'}
+                  ${day.date && isToday(day.date) ? 'bg-primary-50' : ''}
+                  ${day.date === selectedDate ? 'ring-2 ring-inset ring-primary-500' : ''}
+                  transition-all
+                `}
+              >
+                {day.date && (
+                  <>
+                    <div className={`text-sm font-medium mb-2 ${isToday(day.date) ? 'text-primary-600' : 'text-stone-700'}`}>
+                      {parseInt(day.date.split('-')[2])}
+                    </div>
+                    {day.data && (
+                      <div className="space-y-1">
+                        {/* Occupancy bar */}
+                        <div className="h-1.5 bg-stone-200 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full ${getOccupancyColor(day.data.occupancy, day.data.capacity)} transition-all`}
+                            style={{ width: `${day.data.capacity > 0 ? Math.min((day.data.occupancy / day.data.capacity) * 100, 100) : 0}%` }}
+                          />
+                        </div>
+                        <div className="text-xs text-stone-500">
+                          {day.data.occupancy}/{day.data.capacity}
+                        </div>
+
+                        {/* Event indicators */}
+                        <div className="flex flex-wrap gap-1">
+                          {day.data.check_ins > 0 && (
+                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                              <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                              {day.data.check_ins}
+                            </span>
+                          )}
+                          {day.data.check_outs > 0 && (
+                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-700">
+                              <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+                              {day.data.check_outs}
+                            </span>
+                          )}
+                          {day.data.meet_greets > 0 && (
+                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700">
+                              <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                              {day.data.meet_greets}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Capacity info */}
+        {calendarData && (
+          <div className="mt-4 text-sm text-stone-500">
+            Total Capacity: {calendarData.total_capacity} spots
+          </div>
+        )}
+      </div>
+
+      {/* Day Detail Panel */}
+      {selectedDate && (
+        <div className="lg:w-96 bg-white rounded-xl border border-stone-200 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-stone-800">
+              {new Date(selectedDate + 'T12:00:00').toLocaleDateString('en-US', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </h2>
+            <button
+              onClick={() => {
+                setSelectedDate(null);
+                setDayDetail(null);
+              }}
+              className="p-1 hover:bg-stone-100 rounded"
+            >
+              <svg className="w-5 h-5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {dayLoading ? (
+            <div className="animate-pulse text-stone-500">Loading...</div>
+          ) : dayDetail ? (
+            <div className="space-y-6">
+              {/* Occupancy Summary */}
+              <div>
+                <h3 className="text-sm font-medium text-stone-500 uppercase tracking-wide mb-2">
+                  Occupancy
+                </h3>
+                <div className="bg-stone-50 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-stone-600">Total</span>
+                    <span className="font-semibold text-stone-800">
+                      {dayDetail.occupancy.total} / {dayDetail.occupancy.capacity}
+                    </span>
+                  </div>
+                  <div className="h-2 bg-stone-200 rounded-full overflow-hidden mb-4">
+                    <div
+                      className={`h-full ${getOccupancyColor(dayDetail.occupancy.total, dayDetail.occupancy.capacity)}`}
+                      style={{
+                        width: `${dayDetail.occupancy.capacity > 0 ? Math.min((dayDetail.occupancy.total / dayDetail.occupancy.capacity) * 100, 100) : 0}%`,
+                      }}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    {Object.entries(dayDetail.occupancy.by_size).map(([size, data]) => (
+                      <div key={size} className="flex justify-between">
+                        <span className="text-stone-500 capitalize">{size.replace('_', ' ')}</span>
+                        <span className="text-stone-700">{data.used}/{data.total}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Check-ins */}
+              {dayDetail.check_ins.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-medium text-stone-500 uppercase tracking-wide mb-2">
+                    Check-ins ({dayDetail.check_ins.length})
+                  </h3>
+                  <div className="space-y-2">
+                    {dayDetail.check_ins.map((checkin) => (
+                      <div
+                        key={checkin.booking_id}
+                        className="bg-blue-50 border border-blue-100 rounded-lg p-3"
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-medium text-stone-800">{checkin.pet_name}</span>
+                          <StatusBadge status={checkin.status} />
+                        </div>
+                        <div className="text-sm text-stone-600">
+                          {checkin.pet_type} {checkin.pet_breed && `• ${checkin.pet_breed}`}
+                          {checkin.size && ` • ${checkin.size}`}
+                        </div>
+                        <div className="text-sm text-stone-500 mt-1">
+                          Owner: {checkin.client_name}
+                        </div>
+                        <div className="text-xs text-stone-400 mt-1">
+                          Check-out: {new Date(checkin.check_out + 'T12:00:00').toLocaleDateString()}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Check-outs */}
+              {dayDetail.check_outs.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-medium text-stone-500 uppercase tracking-wide mb-2">
+                    Check-outs ({dayDetail.check_outs.length})
+                  </h3>
+                  <div className="space-y-2">
+                    {dayDetail.check_outs.map((checkout) => (
+                      <div
+                        key={checkout.booking_id}
+                        className="bg-orange-50 border border-orange-100 rounded-lg p-3"
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-medium text-stone-800">{checkout.pet_name}</span>
+                          <StatusBadge status={checkout.status} />
+                        </div>
+                        <div className="text-sm text-stone-600">
+                          {checkout.pet_type} {checkout.size && `• ${checkout.size}`}
+                        </div>
+                        <div className="text-sm text-stone-500 mt-1">
+                          Owner: {checkout.client_name}
+                        </div>
+                        <div className="text-xs text-stone-400 mt-1">
+                          Checked-in: {new Date(checkout.check_in + 'T12:00:00').toLocaleDateString()}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Meet & Greets */}
+              {dayDetail.meet_greets.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-medium text-stone-500 uppercase tracking-wide mb-2">
+                    Meet & Greets ({dayDetail.meet_greets.length})
+                  </h3>
+                  <div className="space-y-2">
+                    {dayDetail.meet_greets.map((mg) => (
+                      <div
+                        key={mg.id}
+                        className="bg-purple-50 border border-purple-100 rounded-lg p-3"
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-medium text-stone-800">{mg.client_name}</span>
+                          <span className="text-sm text-purple-600">{mg.time}</span>
+                        </div>
+                        <div className="text-sm text-stone-500">{mg.client_email}</div>
+                        {mg.pet_info && (
+                          <div className="text-sm text-stone-600 mt-1">{mg.pet_info}</div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Empty state */}
+              {dayDetail.check_ins.length === 0 &&
+                dayDetail.check_outs.length === 0 &&
+                dayDetail.meet_greets.length === 0 && (
+                  <div className="text-center py-8 text-stone-500">
+                    No events scheduled for this day
+                  </div>
+                )}
+            </div>
+          ) : (
+            <div className="text-stone-500">Select a day to view details</div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
