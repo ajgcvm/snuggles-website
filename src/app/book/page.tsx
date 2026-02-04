@@ -37,6 +37,9 @@ export default function BookPage() {
 
       try {
         const data = await fetchUser();
+
+        // Reset booking state and set auth (starts fresh each time)
+        reset();
         setAuth(token, data.client, data.pets || []);
       } catch (error) {
         console.error('fetchUser error:', error);
@@ -49,7 +52,7 @@ export default function BookPage() {
     };
 
     checkAuth();
-  }, [router]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSuccess = () => {
     setIsSuccess(true);
@@ -58,6 +61,11 @@ export default function BookPage() {
   const handleBookAnother = () => {
     reset();
     setIsSuccess(false);
+  };
+
+  const handleCancel = () => {
+    reset();
+    router.push('/');
   };
 
   if (isLoading) {
@@ -84,9 +92,12 @@ export default function BookPage() {
             <Image src="/images/logo-expanded.svg" alt="Snuggles" width={40} height={40} />
             <span className="text-lg font-bold text-primary-700 hidden sm:block">Book Your Stay</span>
           </Link>
-          <Link href="/" className="text-stone-600 hover:text-stone-800 text-sm">
+          <button
+            onClick={handleCancel}
+            className="text-stone-600 hover:text-stone-800 text-sm"
+          >
             Cancel
-          </Link>
+          </button>
         </div>
       </header>
 
