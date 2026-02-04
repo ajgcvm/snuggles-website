@@ -373,3 +373,32 @@ export async function adminSendPaymentRequest(
 
   return response.json();
 }
+
+export interface RefundResult {
+  success: boolean;
+  refund_id: string;
+  amount: number;
+  status: string;
+}
+
+export async function adminProcessRefund(
+  authHeader: string,
+  bookingId: string,
+  options?: { amount?: number; reason?: string }
+): Promise<RefundResult> {
+  const response = await fetch(`${API_URL}/api/admin/bookings/${bookingId}/refund`, {
+    method: 'POST',
+    headers: {
+      Authorization: authHeader,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(options || {}),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to process refund');
+  }
+
+  return response.json();
+}

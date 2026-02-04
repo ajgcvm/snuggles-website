@@ -13,6 +13,7 @@ import {
   adminUpdatePet,
   adminFetchStripeProducts,
   adminSendPaymentRequest,
+  adminProcessRefund,
   getAuthToken,
   getCachedUser,
   clearAuth,
@@ -1373,6 +1374,13 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
   const [paymentSectionOpen, setPaymentSectionOpen] = useState(true);
   const [linkCopied, setLinkCopied] = useState(false);
 
+  // Refund state
+  const [processingRefund, setProcessingRefund] = useState(false);
+  const [refundError, setRefundError] = useState<string | null>(null);
+  const [showRefundConfirm, setShowRefundConfirm] = useState(false);
+  const [refundAmount, setRefundAmount] = useState<string>('');
+  const [isPartialRefund, setIsPartialRefund] = useState(false);
+
   const copyPaymentLink = async () => {
     if (booking.payment_link) {
       await navigator.clipboard.writeText(booking.payment_link);
@@ -1390,6 +1398,40 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
   const showSuccess = (message: string) => {
     setSaveSuccess(message);
     setTimeout(() => setSaveSuccess(null), 2000);
+  };
+
+  // Process refund
+  const handleRefund = async () => {
+    setProcessingRefund(true);
+    setRefundError(null);
+
+    try {
+      const options: { amount?: number; reason?: string } = {
+        reason: 'requested_by_customer',
+      };
+
+      // If partial refund, convert dollars to cents
+      if (isPartialRefund && refundAmount) {
+        const amountInCents = Math.round(parseFloat(refundAmount) * 100);
+        if (isNaN(amountInCents) || amountInCents <= 0) {
+          setRefundError('Please enter a valid refund amount');
+          setProcessingRefund(false);
+          return;
+        }
+        options.amount = amountInCents;
+      }
+
+      await adminProcessRefund(authHeader, booking.id, options);
+      showSuccess('Refund processed successfully');
+      setShowRefundConfirm(false);
+      setIsPartialRefund(false);
+      setRefundAmount('');
+      onRefresh(); // Refresh booking data
+    } catch (error) {
+      setRefundError(error instanceof Error ? error.message : 'Failed to process refund');
+    } finally {
+      setProcessingRefund(false);
+    }
   };
 
   // Load Stripe products when payment section is shown
@@ -1821,6 +1863,139 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
                       day: 'numeric',
                       year: 'numeric',
                     })}
+                  </p>
+                </div>
+              )}
+
+              {/* Refund Section - Show when payment is paid */}
+              {booking.payment_status === 'paid' && (
+                <div className="border-t border-stone-200 pt-4 mt-4">
+                  {!showRefundConfirm ? (
+                    <button
+                      onClick={() => setShowRefundConfirm(true)}
+                      className="text-sm text-red-600 hover:text-red-700 flex items-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                      </svg>
+                      Issue Refund
+                    </button>
+                  ) : (
+                    <div className="bg-red-50 rounded-lg p-4">
+                      <h4 className="font-medium text-red-800 mb-3 flex items-center gap-2">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        Confirm Refund
+                      </h4>
+
+                      <div className="space-y-3 mb-4">
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="refundType"
+                            checked={!isPartialRefund}
+                            onChange={() => setIsPartialRefund(false)}
+                            className="text-primary-600"
+                          />
+                          <span className="text-sm text-stone-700">
+                            Full refund (${((booking.payment_amount || 0) / 100).toFixed(2)})
+                          </span>
+                        </label>
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="refundType"
+                            checked={isPartialRefund}
+                            onChange={() => setIsPartialRefund(true)}
+                            className="text-primary-600"
+                          />
+                          <span className="text-sm text-stone-700">Partial refund</span>
+                        </label>
+                        {isPartialRefund && (
+                          <div className="ml-6">
+                            <div className="flex items-center gap-2">
+                              <span className="text-stone-600">$</span>
+                              <input
+                                type="number"
+                                step="0.01"
+                                min="0.01"
+                                max={((booking.payment_amount || 0) / 100)}
+                                value={refundAmount}
+                                onChange={(e) => setRefundAmount(e.target.value)}
+                                placeholder="0.00"
+                                className="w-24 px-2 py-1 border border-stone-300 rounded text-sm"
+                              />
+                            </div>
+                            <p className="text-xs text-stone-500 mt-1">
+                              Max: ${((booking.payment_amount || 0) / 100).toFixed(2)}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                      {refundError && (
+                        <div className="bg-red-100 text-red-700 text-sm p-2 rounded mb-3">
+                          {refundError}
+                        </div>
+                      )}
+
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handleRefund}
+                          disabled={processingRefund || (isPartialRefund && !refundAmount)}
+                          className="px-3 py-1.5 bg-red-600 text-white rounded text-sm hover:bg-red-700 disabled:opacity-50 flex items-center gap-1"
+                        >
+                          {processingRefund ? (
+                            <>
+                              <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                              Processing...
+                            </>
+                          ) : (
+                            'Process Refund'
+                          )}
+                        </button>
+                        <button
+                          onClick={() => {
+                            setShowRefundConfirm(false);
+                            setIsPartialRefund(false);
+                            setRefundAmount('');
+                            setRefundError(null);
+                          }}
+                          disabled={processingRefund}
+                          className="px-3 py-1.5 bg-stone-200 text-stone-700 rounded text-sm hover:bg-stone-300 disabled:opacity-50"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+
+                      <p className="text-xs text-stone-500 mt-3">
+                        The refund will be sent to the customer&apos;s original payment method.
+                        An email notification will be sent automatically.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Refund Info - Show when already refunded */}
+              {(booking.payment_status === 'refunded' || booking.payment_status === 'partially_refunded') && (
+                <div className="bg-purple-50 rounded-lg p-3 mb-4">
+                  <p className="text-sm text-purple-800">
+                    <span className="font-medium">
+                      {booking.payment_status === 'refunded' ? 'Fully Refunded' : 'Partially Refunded'}:
+                    </span>{' '}
+                    ${((booking.refund_amount || 0) / 100).toFixed(2)}
+                    {booking.refunded_at && (
+                      <> on {new Date(booking.refunded_at).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}</>
+                    )}
                   </p>
                 </div>
               )}

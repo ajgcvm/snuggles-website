@@ -92,6 +92,9 @@ export interface Booking {
   payment_amount?: number;
   paid_at?: string;
   payment_line_items?: string;
+  // Refund fields
+  refund_amount?: number;
+  refunded_at?: string;
 }
 
 export interface BookingState {
