@@ -87,6 +87,26 @@ export async function addPet(petData: Partial<Pet>): Promise<{ pet: Pet }> {
   return response.json();
 }
 
+export async function updateUserProfile(data: { phone?: string; name?: string }): Promise<{ success: boolean }> {
+  const token = getAuthToken();
+  if (!token) throw new Error('Not authenticated');
+
+  const response = await fetch(`${API_URL}/api/me`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to update profile');
+  }
+
+  return response.json();
+}
+
 export async function updatePet(petId: string, petData: Partial<Pet>): Promise<{ pet: Pet }> {
   const token = getAuthToken();
   if (!token) throw new Error('Not authenticated');

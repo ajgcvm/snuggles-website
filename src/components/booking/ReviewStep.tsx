@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useBookingStore } from '@/stores/bookingStore';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { getEstimate, submitBooking } from '@/lib/api';
+import { getEstimate, submitBooking, updateUserProfile } from '@/lib/api';
 import { getBreedWarnings } from '@/lib/breedValidation';
 
 interface ReviewStepProps {
@@ -121,6 +121,15 @@ export function ReviewStep({ onSuccess }: ReviewStepProps) {
       });
 
       if (result.status === 'success' || result.bookingId) {
+        // Update user profile if phone changed
+        if (loggedInUser && client.phone && client.phone !== loggedInUser.phone) {
+          try {
+            await updateUserProfile({ phone: client.phone });
+          } catch (e) {
+            console.error('Failed to update phone:', e);
+            // Don't block booking success
+          }
+        }
         onSuccess();
       } else {
         setError(result.message || 'Failed to submit booking');

@@ -174,10 +174,10 @@ function SuccessScreen({ onBookAnother }: { onBookAnother: () => void }) {
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
-            href="/"
+            href="/my-account"
             className="inline-block bg-primary-600 text-white px-6 py-3 rounded-full font-medium hover:bg-primary-700 transition-colors"
           >
-            Back to Home
+            Back to My Account
           </Link>
           <button
             onClick={onBookAnother}
