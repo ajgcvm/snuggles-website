@@ -516,6 +516,13 @@ function BookingsSection({
     try {
       const data = await adminFetchBookings(authHeader, statusFilter || undefined);
       setBookings(data.bookings);
+      // Update selectedBooking with fresh data if it's open
+      if (selectedBooking) {
+        const updated = data.bookings.find(b => b.id === selectedBooking.id);
+        if (updated) {
+          setSelectedBooking(updated);
+        }
+      }
     } catch (error) {
       console.error('Error loading bookings:', error);
     } finally {
