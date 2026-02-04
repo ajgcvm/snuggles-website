@@ -1818,8 +1818,8 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
         </div>
       </div>
 
-      {/* Payment Section */}
-      {(booking.status === 'confirmed' || booking.status === 'pending' || booking.status === 'pending_meetgreet') && (
+      {/* Payment Section - Show for active bookings OR when there's payment info */}
+      {(booking.status === 'confirmed' || booking.status === 'pending' || booking.status === 'pending_meetgreet' || booking.status === 'completed' || booking.payment_status === 'paid' || booking.payment_status === 'refunded' || booking.payment_status === 'partially_refunded') && (
         <div className="bg-white rounded-lg border border-stone-200 overflow-hidden">
           <button
             onClick={() => setPaymentSectionOpen(!paymentSectionOpen)}
