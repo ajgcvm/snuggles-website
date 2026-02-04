@@ -37,9 +37,17 @@ function AuthCallbackContent() {
           setCachedUser(userData);
         }
 
-        // Always redirect to my-account after login
-        // Users can navigate to admin from the header menu if they have access
-        router.push('/my-account');
+        // Get redirect URL from sessionStorage (set before OAuth redirect)
+        const redirectUrl = typeof window !== 'undefined'
+          ? sessionStorage.getItem('login_redirect') || '/my-account'
+          : '/my-account';
+
+        // Clear the stored redirect
+        if (typeof window !== 'undefined') {
+          sessionStorage.removeItem('login_redirect');
+        }
+
+        router.push(redirectUrl);
       } catch (err) {
         console.error('Auth callback error:', err);
         setError(err instanceof Error ? err.message : 'Failed to complete authentication');

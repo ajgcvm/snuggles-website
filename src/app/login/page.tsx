@@ -3,13 +3,17 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { getAuthToken, getGoogleAuthUrl, fetchUser } from '@/lib/api';
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
+
+  // Get redirect URL from query params (e.g., /login?redirect=/book)
+  const redirectUrl = searchParams.get('redirect') || '/my-account';
 
   useEffect(() => {
     // Check if already logged in
@@ -18,7 +22,7 @@ export default function LoginPage() {
       if (token) {
         try {
           await fetchUser();
-          router.push('/my-account');
+          router.push(redirectUrl);
           return;
         } catch {
           // Token invalid, continue to login
@@ -28,11 +32,15 @@ export default function LoginPage() {
     };
 
     checkAuth();
-  }, [router]);
+  }, [router, redirectUrl]);
 
   const handleGoogleLogin = async () => {
     setLoading(true);
     try {
+      // Store redirect URL for after OAuth callback
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('login_redirect', redirectUrl);
+      }
       const url = await getGoogleAuthUrl();
       window.location.href = url;
     } catch (error) {
@@ -66,8 +74,14 @@ export default function LoginPage() {
               className="mx-auto mb-4"
             />
           </Link>
-          <h1 className="text-2xl font-bold text-stone-800">Welcome Back</h1>
-          <p className="text-stone-600 mt-2">Sign in to manage your bookings and pets</p>
+          <h1 className="text-2xl font-bold text-stone-800">
+            {redirectUrl === '/book' ? 'Sign In to Book' : 'Welcome Back'}
+          </h1>
+          <p className="text-stone-600 mt-2">
+            {redirectUrl === '/book'
+              ? 'Please sign in to continue with your booking'
+              : 'Sign in to manage your bookings and pets'}
+          </p>
         </div>
 
         <button

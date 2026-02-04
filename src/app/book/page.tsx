@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useBookingStore } from '@/stores/bookingStore';
-import { getAuthToken, fetchUser, getCachedUser } from '@/lib/api';
+import { getAuthToken, fetchUser } from '@/lib/api';
 import {
   StepIndicator,
   ServiceStep,
@@ -18,42 +19,37 @@ import { SITE_CONFIG } from '@/lib/constants';
 const STEPS = ['Service', 'Dates', 'Pets', 'Contact', 'Review'];
 
 export default function BookPage() {
+  const router = useRouter();
   const { currentStep, setAuth, reset } = useBookingStore();
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Check for logged-in user
+  // Check for logged-in user - require login to book
   useEffect(() => {
     const checkAuth = async () => {
       const token = getAuthToken();
-      const cachedUser = getCachedUser();
 
-      if (token) {
-        try {
-          const data = await fetchUser();
-          console.log('fetchUser response:', data);
-          console.log('pets from API:', data.pets);
-          setAuth(token, data.client, data.pets || []);
-        } catch (error) {
-          console.error('fetchUser error:', error);
-          // Not logged in or error, continue as guest
-          setAuth(null, null, []);
-        }
-      } else {
-        // No token - continue as guest
-        setAuth(null, null, []);
+      if (!token) {
+        // Redirect to login with return URL
+        router.push('/login?redirect=/book');
+        return;
+      }
+
+      try {
+        const data = await fetchUser();
+        setAuth(token, data.client, data.pets || []);
+      } catch (error) {
+        console.error('fetchUser error:', error);
+        // Token expired or invalid - redirect to login
+        router.push('/login?redirect=/book');
+        return;
       }
 
       setIsLoading(false);
     };
 
     checkAuth();
-
-    // Reset booking state when leaving
-    return () => {
-      // Don't reset if we're showing success
-    };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [router]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSuccess = () => {
     setIsSuccess(true);
