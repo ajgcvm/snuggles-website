@@ -66,6 +66,7 @@ export type PaymentStatus = 'pending_payment' | 'paid' | 'payment_expired' | 're
 
 export interface Booking {
   id: string;
+  booking_number?: number;  // Sequential booking number (e.g., #1, #2, #3...)
   service: 'boarding' | 'daycare';
   check_in: string;
   check_out: string;

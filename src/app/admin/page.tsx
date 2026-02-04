@@ -571,7 +571,7 @@ function BookingsSection({
             <table className="w-full">
               <thead className="bg-stone-50 border-b border-stone-200">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-stone-500 uppercase">ID</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-stone-500 uppercase">#</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-stone-500 uppercase">Client</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-stone-500 uppercase">Pets</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-stone-500 uppercase">Dates</th>
@@ -588,7 +588,9 @@ function BookingsSection({
 
                   return (
                     <tr key={booking.id} className="hover:bg-stone-50">
-                      <td className="px-4 py-3 text-sm font-mono">{booking.id}</td>
+                      <td className="px-4 py-3 text-sm font-medium text-stone-700">
+                        {booking.booking_number ? `#${booking.booking_number}` : booking.id.slice(0, 8)}
+                      </td>
                       <td className="px-4 py-3">
                         <div className="text-sm font-medium text-stone-800">{booking.client_name}</div>
                         <div className="text-xs text-stone-500">{booking.client_email}</div>
@@ -643,7 +645,7 @@ function BookingsSection({
       <Modal
         isOpen={!!selectedBooking}
         onClose={() => setSelectedBooking(null)}
-        title="Booking Details"
+        title={selectedBooking?.booking_number ? `Booking #${selectedBooking.booking_number}` : 'Booking Details'}
         maxWidth="2xl"
       >
         {selectedBooking && (
@@ -1360,6 +1362,7 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [sendingPayment, setSendingPayment] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [paymentSectionOpen, setPaymentSectionOpen] = useState(true);
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '-';
@@ -1374,7 +1377,7 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
 
   // Load Stripe products when payment section is shown
   const loadStripeProducts = async () => {
-    if (stripeProducts.length > 0) return; // Already loaded
+    if (stripeProducts.length > 0 || loadingProducts) return; // Already loaded or loading
     setLoadingProducts(true);
     try {
       const data = await adminFetchStripeProducts(authHeader);
@@ -1389,6 +1392,13 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
       setLoadingProducts(false);
     }
   };
+
+  // Auto-load Stripe products on mount for eligible bookings
+  useEffect(() => {
+    if (booking.status === 'confirmed' || booking.status === 'pending' || booking.status === 'pending_meetgreet') {
+      loadStripeProducts();
+    }
+  }, [booking.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Helper to get price info from product (supports both flat and array format)
   const getProductPrice = (product: StripeProduct) => {
@@ -1753,36 +1763,36 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
       {(booking.status === 'confirmed' || booking.status === 'pending' || booking.status === 'pending_meetgreet') && (
         <div className="bg-white rounded-lg border border-stone-200 overflow-hidden">
           <button
-            onClick={loadStripeProducts}
+            onClick={() => setPaymentSectionOpen(!paymentSectionOpen)}
             className="w-full px-4 py-3 flex items-center justify-between bg-stone-50 hover:bg-stone-100 transition-colors"
           >
             <div className="flex items-center gap-2">
               <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
               </svg>
-              <span className="font-medium text-stone-800">Payment</span>
-              {booking.payment_status && (
-                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                  booking.payment_status === 'paid' ? 'bg-green-100 text-green-700' :
-                  booking.payment_status === 'payment_expired' ? 'bg-red-100 text-red-700' :
-                  booking.payment_status === 'refunded' ? 'bg-stone-100 text-stone-600' :
-                  'bg-amber-100 text-amber-700'
-                }`}>
-                  {booking.payment_status === 'paid' ? 'Paid' :
-                   booking.payment_status === 'payment_expired' ? 'Expired' :
-                   booking.payment_status === 'refunded' ? 'Refunded' :
-                   booking.payment_status === 'partially_refunded' ? 'Partial Refund' :
-                   'Awaiting Payment'}
-                </span>
-              )}
+              <span className="font-medium text-stone-800">Stripe Payment</span>
+              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                booking.payment_status === 'paid' ? 'bg-green-100 text-green-700' :
+                booking.payment_status === 'payment_expired' ? 'bg-red-100 text-red-700' :
+                booking.payment_status === 'refunded' ? 'bg-stone-100 text-stone-600' :
+                booking.payment_status === 'pending_payment' ? 'bg-amber-100 text-amber-700' :
+                'bg-stone-100 text-stone-500'
+              }`}>
+                {booking.payment_status === 'paid' ? 'Paid' :
+                 booking.payment_status === 'payment_expired' ? 'Expired' :
+                 booking.payment_status === 'refunded' ? 'Refunded' :
+                 booking.payment_status === 'partially_refunded' ? 'Partial Refund' :
+                 booking.payment_status === 'pending_payment' ? 'Awaiting Payment' :
+                 'Not Configured'}
+              </span>
             </div>
-            <svg className="w-5 h-5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-5 h-5 text-stone-400 transition-transform ${paymentSectionOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </button>
 
-          {/* Payment Details - Show if products loaded */}
-          {stripeProducts.length > 0 && (
+          {/* Payment Details - Show if section is open */}
+          {paymentSectionOpen && (
             <div className="p-4 border-t border-stone-200">
               {/* Payment Status Info */}
               {booking.payment_status === 'paid' && booking.paid_at && (
