@@ -576,7 +576,8 @@ function BookingsSection({
                   <th className="px-4 py-3 text-left text-xs font-medium text-stone-500 uppercase">Pets</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-stone-500 uppercase">Dates</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-stone-500 uppercase">Price</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-stone-500 uppercase">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-stone-500 uppercase">Booking</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-stone-500 uppercase">Payment</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-stone-500 uppercase">Actions</th>
                 </tr>
               </thead>
@@ -601,6 +602,25 @@ function BookingsSection({
                       </td>
                       <td className="px-4 py-3">
                         <StatusBadge status={booking.status} />
+                      </td>
+                      <td className="px-4 py-3">
+                        {booking.payment_status ? (
+                          <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                            booking.payment_status === 'paid' ? 'bg-green-100 text-green-700' :
+                            booking.payment_status === 'payment_expired' ? 'bg-red-100 text-red-700' :
+                            booking.payment_status === 'pending_payment' ? 'bg-amber-100 text-amber-700' :
+                            booking.payment_status === 'refunded' ? 'bg-purple-100 text-purple-700' :
+                            'bg-stone-100 text-stone-600'
+                          }`}>
+                            {booking.payment_status === 'paid' ? 'Paid' :
+                             booking.payment_status === 'payment_expired' ? 'Expired' :
+                             booking.payment_status === 'pending_payment' ? 'Pending' :
+                             booking.payment_status === 'refunded' ? 'Refunded' :
+                             booking.payment_status}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-stone-400">—</span>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         <button
@@ -958,7 +978,7 @@ function ClientDetail({
                     <p className="text-xs text-stone-500">
                       {pet.type}
                       {pet.breed && ` • ${pet.breed}`}
-                      {pet.weight && ` • ${pet.weight} lbs`}
+                      {pet.weight && pet.weight > 0 && ` • ${pet.weight} lbs`}
                     </p>
                   </div>
                 </div>
@@ -1163,7 +1183,7 @@ function PetsSection({
                     </td>
                     <td className="px-4 py-3 text-sm text-stone-600">
                       {pet.suggested_size || '-'}
-                      {pet.weight && <span className="text-xs text-stone-400 ml-1">({pet.weight} lbs)</span>}
+                      {pet.weight && pet.weight > 0 && <span className="text-xs text-stone-400 ml-1">({pet.weight} lbs)</span>}
                     </td>
                     <td className="px-4 py-3">
                       <span className={`text-xs px-2 py-1 rounded-full font-medium ${getStatusColor(pet.status)}`}>
@@ -1260,11 +1280,11 @@ function PetDetail({
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-stone-50 rounded-lg p-4">
           <p className="text-xs text-stone-500 mb-1">Weight</p>
-          <p className="text-stone-800">{pet.weight ? `${pet.weight} lbs` : 'Not provided'}</p>
+          <p className="text-stone-800">{pet.weight && pet.weight > 0 ? `${pet.weight} lbs` : 'Not provided'}</p>
         </div>
         <div className="bg-stone-50 rounded-lg p-4">
           <p className="text-xs text-stone-500 mb-1">Age</p>
-          <p className="text-stone-800">{pet.age_years ? `${pet.age_years} years` : 'Not provided'}</p>
+          <p className="text-stone-800">{pet.age_years && pet.age_years > 0 ? `${pet.age_years} years` : 'Not provided'}</p>
         </div>
         <div className="bg-stone-50 rounded-lg p-4">
           <p className="text-xs text-stone-500 mb-1">Suggested Size</p>
@@ -1525,7 +1545,7 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
       )}
 
       {/* Meet & Greet Section - Show first if required */}
-      {booking.requires_meet_greet && (
+      {!!booking.requires_meet_greet && (
         <div className={`rounded-lg p-4 border ${meetGreetCompleted ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'}`}>
           <div className="flex items-center justify-between mb-3">
             <h3 className={`font-medium ${meetGreetCompleted ? 'text-green-800' : 'text-amber-800'}`}>
@@ -1641,7 +1661,7 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
       </div>
 
       {/* Hint for M&G required bookings */}
-      {booking.requires_meet_greet && !meetGreetCompleted && booking.status === 'pending_meetgreet' && (
+      {!!booking.requires_meet_greet && !meetGreetCompleted && booking.status === 'pending_meetgreet' && (
         <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-lg">
           Complete the Meet & Greet before confirming this booking
         </p>
@@ -1667,7 +1687,7 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
             </div>
 
             {/* Show payment info if exists */}
-            {booking.payment_amount ? (
+            {booking.payment_amount && booking.payment_amount > 0 ? (
               <div className="flex justify-between text-sm">
                 <span className="text-stone-500">Charged (Stripe):</span>
                 <span className={`font-medium ${booking.payment_status === 'paid' ? 'text-green-600' : 'text-stone-700'}`}>
@@ -1675,21 +1695,28 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
                 </span>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-stone-500">Final:</span>
-                <input
-                  type="number"
-                  value={finalPrice}
-                  onChange={(e) => setFinalPrice(parseFloat(e.target.value))}
-                  className="w-24 px-2 py-1 border border-stone-300 rounded text-sm"
-                />
-                <button
-                  onClick={handleSaveFinalPrice}
-                  disabled={saving}
-                  className="text-primary-600 hover:text-primary-700 text-sm disabled:opacity-50"
-                >
-                  Save
-                </button>
+              <div className="space-y-2 pt-2 border-t border-stone-200">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-stone-500 font-medium">Offline Payment (Cash/Check/Zelle)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-stone-500">$</span>
+                  <input
+                    type="number"
+                    value={finalPrice}
+                    onChange={(e) => setFinalPrice(parseFloat(e.target.value))}
+                    placeholder="Amount"
+                    className="w-24 px-2 py-1 border border-stone-300 rounded text-sm"
+                  />
+                  <button
+                    onClick={handleSaveFinalPrice}
+                    disabled={saving}
+                    className="px-3 py-1 bg-stone-600 text-white rounded text-sm hover:bg-stone-700 disabled:opacity-50"
+                  >
+                    {saving ? '...' : 'Record'}
+                  </button>
+                </div>
+                <p className="text-xs text-stone-400">For payments received outside of Stripe</p>
               </div>
             )}
 
@@ -1713,7 +1740,7 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
             )}
 
             {/* Paid timestamp */}
-            {booking.paid_at && (
+            {!!booking.paid_at && (
               <p className="text-xs text-stone-400">
                 Paid on {new Date(booking.paid_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
               </p>
@@ -1779,7 +1806,7 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
                 </div>
               )}
 
-              {booking.payment_link && booking.payment_status === 'pending_payment' && (
+              {!!booking.payment_link && booking.payment_status === 'pending_payment' && (
                 <div className="bg-amber-50 rounded-lg p-3 mb-4">
                   <p className="text-sm text-amber-800 mb-2">
                     <span className="font-medium">Payment link sent.</span> Waiting for client to pay.
@@ -1935,20 +1962,20 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
                 {pet.weight && pet.weight > 0 && ` · ${pet.weight} lbs`}
               </p>
               <div className="flex flex-wrap gap-1 mt-1">
-                {pet.suggested_size && (
+                {!!pet.suggested_size && (
                   <span className="text-xs bg-stone-200 text-stone-600 px-2 py-0.5 rounded capitalize">{pet.suggested_size}</span>
                 )}
-                {pet.is_puppy && (
+                {!!pet.is_puppy && (
                   <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded">Puppy</span>
                 )}
-                {pet.needs_medication && (
+                {!!pet.needs_medication && (
                   <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Medication</span>
                 )}
               </div>
-              {pet.special_needs && (
+              {!!pet.special_needs && (
                 <p className="text-sm text-stone-500 mt-2">Notes: {pet.special_needs}</p>
               )}
-              {pet.medication_notes && (
+              {!!pet.medication_notes && (
                 <p className="text-sm text-blue-600 mt-1">Medication: {pet.medication_notes}</p>
               )}
             </div>

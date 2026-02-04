@@ -25,12 +25,14 @@ export function Badge({ variant = 'default', children, className = '' }: BadgePr
 // Status-specific badges for bookings
 export function StatusBadge({ status }: { status: string }) {
   const statusConfig: Record<string, { variant: BadgeProps['variant']; label: string }> = {
-    pending: { variant: 'warning', label: 'Pending' },
-    pending_meetgreet: { variant: 'info', label: 'Meet & Greet Required' },
-    confirmed: { variant: 'success', label: 'Confirmed' },
-    completed: { variant: 'default', label: 'Completed' },
+    // Booking statuses
+    pending: { variant: 'warning', label: 'Pending Review' },
+    pending_meetgreet: { variant: 'info', label: 'Needs M&G' },
+    confirmed: { variant: 'success', label: 'Booking Confirmed' },
+    completed: { variant: 'default', label: 'Stay Completed' },
     cancelled: { variant: 'danger', label: 'Cancelled' },
-    new: { variant: 'warning', label: 'New' },
+    // Client statuses
+    new: { variant: 'warning', label: 'New Client' },
     approved: { variant: 'success', label: 'Approved' },
     blocked: { variant: 'danger', label: 'Blocked' },
   };

@@ -590,7 +590,7 @@ function BookingCard({ booking }: { booking: Booking }) {
         <p>
           <strong>Pets:</strong> {petNames}
         </p>
-        {booking.meet_greet_date && (
+        {!!booking.meet_greet_date && (
           <p>
             <strong>Meet & Greet:</strong>{' '}
             {new Date(booking.meet_greet_date).toLocaleString('en-US', {
@@ -599,7 +599,7 @@ function BookingCard({ booking }: { booking: Booking }) {
             })}
           </p>
         )}
-        {booking.payment_link && booking.payment_status === 'pending_payment' && (
+        {!!booking.payment_link && booking.payment_status === 'pending_payment' && (
           <div className="mt-2">
             <a
               href={booking.payment_link}
