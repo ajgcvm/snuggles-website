@@ -450,6 +450,7 @@ export interface CalendarMeetGreet {
   client_email: string;
   pet_info?: string;
   status: string;
+  outcome?: 'approved' | 'rejected' | 'pending';
 }
 
 export interface CalendarDayDetailResponse {
@@ -489,5 +490,177 @@ export async function adminFetchCalendarDay(
   );
 
   if (!response.ok) throw new Error('Failed to fetch day details');
+  return response.json();
+}
+
+// Calendar Events types
+export interface CalendarEvent {
+  id: string;
+  type: 'meet_greet' | 'blocked' | 'note';
+  title: string;
+  date: string;
+  time?: string;
+  duration_minutes: number;
+  client_id?: string;
+  client_name?: string;
+  client_email?: string;
+  client_phone?: string;
+  pet_name?: string;
+  pet_type?: string;
+  pet_breed?: string;
+  pet_weight?: number;
+  status: 'scheduled' | 'completed' | 'cancelled' | 'no_show';
+  outcome?: 'approved' | 'rejected' | 'pending';
+  notes?: string;
+  booking_id?: string;
+  created_at: string;
+  updated_at: string;
+  created_by?: string;
+}
+
+export interface CreateCalendarEventData {
+  type: 'meet_greet' | 'blocked' | 'note';
+  title: string;
+  date: string;
+  time?: string;
+  duration_minutes?: number;
+  client_id?: string;
+  client_name?: string;
+  client_email?: string;
+  client_phone?: string;
+  pet_name?: string;
+  pet_type?: string;
+  pet_breed?: string;
+  pet_weight?: number;
+  notes?: string;
+}
+
+export interface UpdateCalendarEventData {
+  title?: string;
+  date?: string;
+  time?: string;
+  duration_minutes?: number;
+  client_name?: string;
+  client_email?: string;
+  client_phone?: string;
+  pet_name?: string;
+  pet_type?: string;
+  pet_breed?: string;
+  pet_weight?: number;
+  status?: 'scheduled' | 'completed' | 'cancelled' | 'no_show';
+  outcome?: 'approved' | 'rejected' | 'pending';
+  notes?: string;
+  booking_id?: string;
+}
+
+export interface ClientSearchResult {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  status: string;
+  pets: Array<{
+    id: string;
+    name: string;
+    type: string;
+    breed?: string;
+    weight?: number;
+    size?: string;
+  }>;
+}
+
+// Calendar Events API functions
+export async function adminFetchCalendarEvents(
+  authHeader: string,
+  options?: { date?: string; type?: string; status?: string; clientId?: string }
+): Promise<{ events: CalendarEvent[] }> {
+  const params = new URLSearchParams();
+  if (options?.date) params.append('date', options.date);
+  if (options?.type) params.append('type', options.type);
+  if (options?.status) params.append('status', options.status);
+  if (options?.clientId) params.append('client_id', options.clientId);
+
+  const url = params.toString()
+    ? `${API_URL}/api/admin/calendar/events?${params.toString()}`
+    : `${API_URL}/api/admin/calendar/events`;
+
+  const response = await fetch(url, {
+    headers: { Authorization: authHeader },
+  });
+
+  if (!response.ok) throw new Error('Failed to fetch calendar events');
+  return response.json();
+}
+
+export async function adminCreateCalendarEvent(
+  authHeader: string,
+  data: CreateCalendarEventData
+): Promise<{ event: CalendarEvent; new_user_created: boolean; message: string }> {
+  const response = await fetch(`${API_URL}/api/admin/calendar/events`, {
+    method: 'POST',
+    headers: {
+      Authorization: authHeader,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to create event');
+  }
+
+  return response.json();
+}
+
+export async function adminUpdateCalendarEvent(
+  authHeader: string,
+  eventId: string,
+  data: UpdateCalendarEventData
+): Promise<{ event: CalendarEvent }> {
+  const response = await fetch(`${API_URL}/api/admin/calendar/events/${eventId}`, {
+    method: 'PUT',
+    headers: {
+      Authorization: authHeader,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to update event');
+  }
+
+  return response.json();
+}
+
+export async function adminDeleteCalendarEvent(
+  authHeader: string,
+  eventId: string
+): Promise<{ success: boolean; message: string }> {
+  const response = await fetch(`${API_URL}/api/admin/calendar/events/${eventId}`, {
+    method: 'DELETE',
+    headers: { Authorization: authHeader },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to delete event');
+  }
+
+  return response.json();
+}
+
+export async function adminSearchClients(
+  authHeader: string,
+  email: string
+): Promise<{ clients: ClientSearchResult[] }> {
+  const response = await fetch(
+    `${API_URL}/api/admin/clients/search?email=${encodeURIComponent(email)}`,
+    { headers: { Authorization: authHeader } }
+  );
+
+  if (!response.ok) throw new Error('Failed to search clients');
   return response.json();
 }

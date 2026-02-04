@@ -16,6 +16,9 @@ import {
   adminProcessRefund,
   adminFetchCalendarMonth,
   adminFetchCalendarDay,
+  adminCreateCalendarEvent,
+  adminUpdateCalendarEvent,
+  adminSearchClients,
   getAuthToken,
   getCachedUser,
   clearAuth,
@@ -24,6 +27,8 @@ import type {
   CalendarMonthResponse,
   CalendarDayDetailResponse,
   CalendarDayData,
+  ClientSearchResult,
+  CreateCalendarEventData,
 } from '@/lib/api';
 import type { StripeProduct, PaymentLineItem } from '@/lib/api';
 import { Modal } from '@/components/ui/Modal';
@@ -515,6 +520,25 @@ function CalendarSection({ authHeader }: { authHeader: string }) {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
 
+  // Meet & Greet creation state
+  const [showCreateMG, setShowCreateMG] = useState(false);
+  const [mgDate, setMgDate] = useState('');
+  const [mgTime, setMgTime] = useState('10:00');
+  const [mgClientSearch, setMgClientSearch] = useState('');
+  const [mgSearchResults, setMgSearchResults] = useState<ClientSearchResult[]>([]);
+  const [mgSelectedClient, setMgSelectedClient] = useState<ClientSearchResult | null>(null);
+  const [mgIsNewClient, setMgIsNewClient] = useState(false);
+  const [mgClientName, setMgClientName] = useState('');
+  const [mgClientEmail, setMgClientEmail] = useState('');
+  const [mgClientPhone, setMgClientPhone] = useState('');
+  const [mgPetName, setMgPetName] = useState('');
+  const [mgPetType, setMgPetType] = useState('dog');
+  const [mgPetBreed, setMgPetBreed] = useState('');
+  const [mgPetWeight, setMgPetWeight] = useState('');
+  const [mgNotes, setMgNotes] = useState('');
+  const [mgSaving, setMgSaving] = useState(false);
+  const [mgSearching, setMgSearching] = useState(false);
+
   useEffect(() => {
     loadCalendarMonth();
   }, [authHeader, currentYear, currentMonth]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -541,6 +565,120 @@ function CalendarSection({ authHeader }: { authHeader: string }) {
       console.error('Error loading day detail:', error);
     } finally {
       setDayLoading(false);
+    }
+  };
+
+  // Meet & Greet functions
+  const searchClients = async (email: string) => {
+    if (email.length < 3) {
+      setMgSearchResults([]);
+      return;
+    }
+    setMgSearching(true);
+    try {
+      const data = await adminSearchClients(authHeader, email);
+      setMgSearchResults(data.clients);
+    } catch (error) {
+      console.error('Error searching clients:', error);
+    } finally {
+      setMgSearching(false);
+    }
+  };
+
+  const selectClient = (client: ClientSearchResult) => {
+    setMgSelectedClient(client);
+    setMgClientName(client.name);
+    setMgClientEmail(client.email);
+    setMgClientPhone(client.phone || '');
+    setMgSearchResults([]);
+    setMgClientSearch('');
+    setMgIsNewClient(false);
+  };
+
+  const resetMgForm = () => {
+    setMgDate('');
+    setMgTime('10:00');
+    setMgClientSearch('');
+    setMgSearchResults([]);
+    setMgSelectedClient(null);
+    setMgIsNewClient(false);
+    setMgClientName('');
+    setMgClientEmail('');
+    setMgClientPhone('');
+    setMgPetName('');
+    setMgPetType('dog');
+    setMgPetBreed('');
+    setMgPetWeight('');
+    setMgNotes('');
+  };
+
+  const openCreateMG = (date?: string) => {
+    resetMgForm();
+    if (date) {
+      setMgDate(date);
+    }
+    setShowCreateMG(true);
+  };
+
+  const createMeetGreet = async () => {
+    if (!mgDate || !mgClientEmail) {
+      alert('Date and client email are required');
+      return;
+    }
+
+    setMgSaving(true);
+    try {
+      const eventData: CreateCalendarEventData = {
+        type: 'meet_greet',
+        title: `Meet & Greet - ${mgClientName || mgClientEmail}`,
+        date: mgDate,
+        time: mgTime,
+        client_id: mgSelectedClient?.id,
+        client_name: mgClientName,
+        client_email: mgClientEmail,
+        client_phone: mgClientPhone || undefined,
+        pet_name: mgPetName || undefined,
+        pet_type: mgPetType || undefined,
+        pet_breed: mgPetBreed || undefined,
+        pet_weight: mgPetWeight ? parseFloat(mgPetWeight) : undefined,
+        notes: mgNotes || undefined,
+      };
+
+      const result = await adminCreateCalendarEvent(authHeader, eventData);
+
+      if (result.new_user_created) {
+        alert(`Meet & Greet created! A new client account was created for ${mgClientEmail} (they can sign in with Google later).`);
+      } else {
+        alert('Meet & Greet scheduled successfully!');
+      }
+
+      setShowCreateMG(false);
+      resetMgForm();
+
+      // Refresh calendar and day detail
+      await loadCalendarMonth();
+      if (selectedDate) {
+        await loadDayDetail(selectedDate);
+      }
+    } catch (error) {
+      console.error('Error creating meet & greet:', error);
+      alert(error instanceof Error ? error.message : 'Failed to create meet & greet');
+    } finally {
+      setMgSaving(false);
+    }
+  };
+
+  const updateMgStatus = async (eventId: string, status: 'completed' | 'cancelled' | 'no_show', outcome?: 'approved' | 'rejected') => {
+    try {
+      await adminUpdateCalendarEvent(authHeader, eventId, { status, outcome });
+      // Refresh day detail
+      if (selectedDate) {
+        await loadDayDetail(selectedDate);
+      }
+      await loadCalendarMonth();
+    } catch (error) {
+      console.error('Error updating meet & greet:', error);
+      alert('Failed to update status');
     }
   };
 
@@ -632,6 +770,15 @@ function CalendarSection({ authHeader }: { authHeader: string }) {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-stone-800">Calendar</h1>
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => openCreateMG()}
+              className="px-3 py-1.5 text-sm font-medium bg-purple-600 text-white hover:bg-purple-700 rounded-lg transition-colors flex items-center gap-1.5"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Meet & Greet
+            </button>
             <button
               onClick={goToToday}
               className="px-3 py-1.5 text-sm font-medium text-stone-600 hover:text-stone-800 hover:bg-stone-100 rounded-lg transition-colors"
@@ -908,6 +1055,52 @@ function CalendarSection({ authHeader }: { authHeader: string }) {
                         {mg.pet_info && (
                           <div className="text-sm text-stone-600 mt-1">{mg.pet_info}</div>
                         )}
+                        {/* Status and action buttons */}
+                        {mg.status === 'scheduled' && (
+                          <div className="flex flex-wrap gap-1 mt-3 pt-2 border-t border-purple-200">
+                            <button
+                              onClick={() => updateMgStatus(mg.id, 'completed', 'approved')}
+                              className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 hover:bg-green-200 rounded transition-colors"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => updateMgStatus(mg.id, 'completed', 'rejected')}
+                              className="px-2 py-1 text-xs font-medium bg-red-100 text-red-700 hover:bg-red-200 rounded transition-colors"
+                            >
+                              Reject
+                            </button>
+                            <button
+                              onClick={() => updateMgStatus(mg.id, 'no_show')}
+                              className="px-2 py-1 text-xs font-medium bg-stone-100 text-stone-600 hover:bg-stone-200 rounded transition-colors"
+                            >
+                              No Show
+                            </button>
+                            <button
+                              onClick={() => updateMgStatus(mg.id, 'cancelled')}
+                              className="px-2 py-1 text-xs font-medium bg-stone-100 text-stone-600 hover:bg-stone-200 rounded transition-colors"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        )}
+                        {mg.status !== 'scheduled' && (
+                          <div className="mt-2 flex items-center gap-2">
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${
+                              mg.status === 'completed' && mg.outcome === 'approved'
+                                ? 'bg-green-100 text-green-700'
+                                : mg.status === 'completed' && mg.outcome === 'rejected'
+                                ? 'bg-red-100 text-red-700'
+                                : mg.status === 'cancelled'
+                                ? 'bg-stone-100 text-stone-600'
+                                : 'bg-amber-100 text-amber-700'
+                            }`}>
+                              {mg.status === 'completed'
+                                ? mg.outcome === 'approved' ? 'Approved' : 'Rejected'
+                                : mg.status === 'no_show' ? 'No Show' : 'Cancelled'}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -922,12 +1115,243 @@ function CalendarSection({ authHeader }: { authHeader: string }) {
                     No events scheduled for this day
                   </div>
                 )}
+
+              {/* Add M&G for this day */}
+              <button
+                onClick={() => openCreateMG(selectedDate!)}
+                className="w-full mt-4 px-3 py-2 text-sm font-medium bg-purple-100 text-purple-700 hover:bg-purple-200 rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Schedule Meet & Greet
+              </button>
             </div>
           ) : (
             <div className="text-stone-500">Select a day to view details</div>
           )}
         </div>
       )}
+
+      {/* Create Meet & Greet Modal */}
+      <Modal
+        isOpen={showCreateMG}
+        onClose={() => setShowCreateMG(false)}
+        title="Schedule Meet & Greet"
+      >
+        <div className="space-y-4">
+          {/* Date and Time */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-1">Date *</label>
+              <input
+                type="date"
+                value={mgDate}
+                onChange={(e) => setMgDate(e.target.value)}
+                className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-1">Time</label>
+              <input
+                type="time"
+                value={mgTime}
+                onChange={(e) => setMgTime(e.target.value)}
+                className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          {/* Client Search or New Client toggle */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium text-stone-700">Client</label>
+              <button
+                type="button"
+                onClick={() => {
+                  setMgIsNewClient(!mgIsNewClient);
+                  setMgSelectedClient(null);
+                  setMgSearchResults([]);
+                }}
+                className="text-xs text-purple-600 hover:text-purple-700"
+              >
+                {mgIsNewClient ? 'Search existing' : 'Add new client'}
+              </button>
+            </div>
+
+            {!mgIsNewClient && !mgSelectedClient ? (
+              <div className="relative">
+                <input
+                  type="text"
+                  value={mgClientSearch}
+                  onChange={(e) => {
+                    setMgClientSearch(e.target.value);
+                    searchClients(e.target.value);
+                  }}
+                  placeholder="Search by email..."
+                  className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+                {mgSearching && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <div className="animate-spin w-4 h-4 border-2 border-purple-600 border-t-transparent rounded-full"></div>
+                  </div>
+                )}
+                {mgSearchResults.length > 0 && (
+                  <div className="absolute z-10 w-full mt-1 bg-white border border-stone-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                    {mgSearchResults.map((client) => (
+                      <button
+                        key={client.id}
+                        onClick={() => selectClient(client)}
+                        className="w-full px-3 py-2 text-left hover:bg-stone-50 border-b border-stone-100 last:border-0"
+                      >
+                        <div className="font-medium text-stone-800">{client.name}</div>
+                        <div className="text-sm text-stone-500">{client.email}</div>
+                        {client.pets.length > 0 && (
+                          <div className="text-xs text-stone-400 mt-1">
+                            Pets: {client.pets.map(p => p.name).join(', ')}
+                          </div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : mgSelectedClient ? (
+              <div className="bg-stone-50 rounded-lg p-3 flex justify-between items-center">
+                <div>
+                  <div className="font-medium text-stone-800">{mgSelectedClient.name}</div>
+                  <div className="text-sm text-stone-500">{mgSelectedClient.email}</div>
+                </div>
+                <button
+                  onClick={() => {
+                    setMgSelectedClient(null);
+                    setMgClientName('');
+                    setMgClientEmail('');
+                    setMgClientPhone('');
+                  }}
+                  className="text-stone-400 hover:text-stone-600"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            ) : null}
+          </div>
+
+          {/* New Client Fields (shown when adding new or after selecting existing) */}
+          {(mgIsNewClient || mgSelectedClient) && (
+            <div className="space-y-3 pt-2 border-t border-stone-200">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-stone-600 mb-1">Name *</label>
+                  <input
+                    type="text"
+                    value={mgClientName}
+                    onChange={(e) => setMgClientName(e.target.value)}
+                    className="w-full px-3 py-2 text-sm border border-stone-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-stone-600 mb-1">Email *</label>
+                  <input
+                    type="email"
+                    value={mgClientEmail}
+                    onChange={(e) => setMgClientEmail(e.target.value)}
+                    readOnly={!!mgSelectedClient}
+                    className={`w-full px-3 py-2 text-sm border border-stone-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${mgSelectedClient ? 'bg-stone-50' : ''}`}
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-stone-600 mb-1">Phone</label>
+                <input
+                  type="tel"
+                  value={mgClientPhone}
+                  onChange={(e) => setMgClientPhone(e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-stone-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Pet Info */}
+          <div className="pt-2 border-t border-stone-200">
+            <label className="block text-sm font-medium text-stone-700 mb-2">Pet Info</label>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-stone-600 mb-1">Pet Name</label>
+                <input
+                  type="text"
+                  value={mgPetName}
+                  onChange={(e) => setMgPetName(e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-stone-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-stone-600 mb-1">Type</label>
+                <select
+                  value={mgPetType}
+                  onChange={(e) => setMgPetType(e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-stone-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                >
+                  <option value="dog">Dog</option>
+                  <option value="cat">Cat</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-stone-600 mb-1">Breed</label>
+                <input
+                  type="text"
+                  value={mgPetBreed}
+                  onChange={(e) => setMgPetBreed(e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-stone-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-stone-600 mb-1">Weight (lbs)</label>
+                <input
+                  type="number"
+                  value={mgPetWeight}
+                  onChange={(e) => setMgPetWeight(e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-stone-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Notes */}
+          <div>
+            <label className="block text-sm font-medium text-stone-700 mb-1">Notes</label>
+            <textarea
+              value={mgNotes}
+              onChange={(e) => setMgNotes(e.target.value)}
+              rows={2}
+              className="w-full px-3 py-2 text-sm border border-stone-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+              placeholder="Any special notes..."
+            />
+          </div>
+
+          {/* Actions */}
+          <div className="flex justify-end gap-3 pt-4 border-t border-stone-200">
+            <Button
+              variant="secondary"
+              onClick={() => setShowCreateMG(false)}
+              disabled={mgSaving}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={createMeetGreet}
+              disabled={mgSaving || !mgDate || !mgClientEmail}
+              className="bg-purple-600 hover:bg-purple-700"
+            >
+              {mgSaving ? 'Scheduling...' : 'Schedule Meet & Greet'}
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
