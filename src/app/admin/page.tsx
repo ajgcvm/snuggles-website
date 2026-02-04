@@ -1660,22 +1660,64 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
         </div>
         <div className="bg-stone-50 rounded-lg p-4">
           <h3 className="font-medium text-stone-800 mb-2">Pricing</h3>
-          <p className="text-stone-600">Estimated: ${booking.estimated_price}</p>
-          <div className="flex items-center gap-2 mt-1">
-            <span className="text-sm text-stone-500">Final:</span>
-            <input
-              type="number"
-              value={finalPrice}
-              onChange={(e) => setFinalPrice(parseFloat(e.target.value))}
-              className="w-24 px-2 py-1 border border-stone-300 rounded text-sm"
-            />
-            <button
-              onClick={handleSaveFinalPrice}
-              disabled={saving}
-              className="text-primary-600 hover:text-primary-700 text-sm disabled:opacity-50"
-            >
-              Save
-            </button>
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-stone-500">Estimated:</span>
+              <span className="text-stone-700">${booking.estimated_price}</span>
+            </div>
+
+            {/* Show payment info if exists */}
+            {booking.payment_amount ? (
+              <div className="flex justify-between text-sm">
+                <span className="text-stone-500">Charged (Stripe):</span>
+                <span className={`font-medium ${booking.payment_status === 'paid' ? 'text-green-600' : 'text-stone-700'}`}>
+                  ${(booking.payment_amount / 100).toFixed(2)}
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-stone-500">Final:</span>
+                <input
+                  type="number"
+                  value={finalPrice}
+                  onChange={(e) => setFinalPrice(parseFloat(e.target.value))}
+                  className="w-24 px-2 py-1 border border-stone-300 rounded text-sm"
+                />
+                <button
+                  onClick={handleSaveFinalPrice}
+                  disabled={saving}
+                  className="text-primary-600 hover:text-primary-700 text-sm disabled:opacity-50"
+                >
+                  Save
+                </button>
+              </div>
+            )}
+
+            {/* Payment Status Badge */}
+            {booking.payment_status && (
+              <div className="flex justify-between items-center text-sm pt-2 border-t border-stone-200">
+                <span className="text-stone-500">Payment:</span>
+                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                  booking.payment_status === 'paid' ? 'bg-green-100 text-green-700' :
+                  booking.payment_status === 'payment_expired' ? 'bg-red-100 text-red-700' :
+                  booking.payment_status === 'refunded' ? 'bg-purple-100 text-purple-700' :
+                  'bg-amber-100 text-amber-700'
+                }`}>
+                  {booking.payment_status === 'paid' ? 'Paid' :
+                   booking.payment_status === 'payment_expired' ? 'Expired' :
+                   booking.payment_status === 'refunded' ? 'Refunded' :
+                   booking.payment_status === 'partially_refunded' ? 'Partial Refund' :
+                   'Pending'}
+                </span>
+              </div>
+            )}
+
+            {/* Paid timestamp */}
+            {booking.paid_at && (
+              <p className="text-xs text-stone-400">
+                Paid on {new Date(booking.paid_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -1888,17 +1930,19 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
             <div key={index} className="bg-stone-50 rounded-lg p-4">
               <p className="font-medium text-stone-800">{pet.name}</p>
               <p className="text-sm text-stone-600">
-                {pet.type === 'dog' ? `${pet.breed}, ${pet.weight} lbs` : pet.type}
+                {pet.type}
+                {pet.breed && ` · ${pet.breed}`}
+                {pet.weight && pet.weight > 0 && ` · ${pet.weight} lbs`}
               </p>
-              <div className="flex gap-1 mt-1">
+              <div className="flex flex-wrap gap-1 mt-1">
+                {pet.suggested_size && (
+                  <span className="text-xs bg-stone-200 text-stone-600 px-2 py-0.5 rounded capitalize">{pet.suggested_size}</span>
+                )}
                 {pet.is_puppy && (
                   <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded">Puppy</span>
                 )}
                 {pet.needs_medication && (
                   <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Medication</span>
-                )}
-                {pet.suggested_size && (
-                  <span className="text-xs bg-stone-200 text-stone-600 px-2 py-0.5 rounded">{pet.suggested_size}</span>
                 )}
               </div>
               {pet.special_needs && (

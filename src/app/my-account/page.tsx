@@ -536,18 +536,48 @@ function BookingCard({ booking }: { booking: Booking }) {
     year: 'numeric',
   });
   const petNames = booking.pets.map((p) => p.name).join(', ') || 'No pets';
-  const price = booking.final_price || booking.estimated_price;
+
+  // Use Stripe payment amount if available, otherwise use estimated/final
+  const displayPrice = booking.payment_amount
+    ? (booking.payment_amount / 100).toFixed(2)
+    : (booking.final_price || booking.estimated_price);
+
+  const paymentStatusLabel = {
+    paid: 'Paid',
+    pending_payment: 'Awaiting Payment',
+    payment_expired: 'Payment Expired',
+    refunded: 'Refunded',
+    partially_refunded: 'Partial Refund',
+  };
 
   return (
     <div className="py-4 border-b border-stone-100 last:border-0">
       <div className="flex items-start justify-between mb-2">
-        <div>
+        <div className="flex items-center flex-wrap gap-2">
           <span className="font-medium text-stone-800">{booking.id}</span>
-          <span className="ml-2">
-            <StatusBadge status={booking.status} />
-          </span>
+          <StatusBadge status={booking.status} />
+          {booking.payment_status && booking.payment_status !== 'pending_payment' && (
+            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+              booking.payment_status === 'paid' ? 'bg-green-100 text-green-700' :
+              booking.payment_status === 'refunded' ? 'bg-purple-100 text-purple-700' :
+              booking.payment_status === 'payment_expired' ? 'bg-red-100 text-red-700' :
+              'bg-amber-100 text-amber-700'
+            }`}>
+              {paymentStatusLabel[booking.payment_status] || booking.payment_status}
+            </span>
+          )}
         </div>
-        <span className="text-sm font-medium text-stone-700">${price}</span>
+        <div className="text-right">
+          <span className={`text-sm font-medium ${booking.payment_status === 'paid' ? 'text-green-600' : 'text-stone-700'}`}>
+            ${displayPrice}
+          </span>
+          {booking.payment_status === 'paid' && (
+            <p className="text-xs text-stone-400">Paid</p>
+          )}
+          {!booking.payment_status && (
+            <p className="text-xs text-stone-400">Estimated</p>
+          )}
+        </div>
       </div>
       <div className="text-sm text-stone-600 space-y-1">
         <p>
@@ -568,6 +598,21 @@ function BookingCard({ booking }: { booking: Booking }) {
               timeStyle: 'short',
             })}
           </p>
+        )}
+        {booking.payment_link && booking.payment_status === 'pending_payment' && (
+          <div className="mt-2">
+            <a
+              href={booking.payment_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 bg-primary-600 text-white text-xs px-3 py-1.5 rounded-full hover:bg-primary-700 transition-colors"
+            >
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
+              Complete Payment
+            </a>
+          </div>
         )}
       </div>
     </div>
