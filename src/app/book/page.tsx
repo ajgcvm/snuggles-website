@@ -31,8 +31,10 @@ export default function BookPage() {
       if (token) {
         try {
           const data = await fetchUser();
-          setAuth(token, data.client, data.pets);
-        } catch {
+          console.log('fetchUser response:', data);
+          setAuth(token, data.client, data.pets || []);
+        } catch (error) {
+          console.error('fetchUser error:', error);
           // Not logged in or error, continue as guest
           setAuth(null, null, []);
         }

@@ -511,11 +511,11 @@ export default function HomePage() {
                 <div>
                   <h3 className="font-bold text-lg text-stone-800 mb-4">Hours</h3>
                   <div className="space-y-2 text-stone-600">
-                    <div className="flex justify-between">
-                      <span>Business Hours</span>
-                      <span>9:00 AM - 5:00 PM</span>
+                    <div className="flex items-center gap-2">
+                      <span>Business Hours:</span>
+                      <span className="font-medium">9:00 AM - 5:00 PM</span>
                     </div>
-                    <p className="text-sm text-stone-500 mt-2">
+                    <p className="text-sm text-stone-500">
                       Early drop-off or late pick-up available (+$10/hour)
                     </p>
                   </div>

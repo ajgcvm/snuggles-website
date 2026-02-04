@@ -317,7 +317,7 @@ export interface StripeProduct {
 }
 
 export interface PaymentLineItem {
-  price: string;
+  price_id: string;
   quantity: number;
 }
 
@@ -343,7 +343,7 @@ export async function adminSendPaymentRequest(
       Authorization: authHeader,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ lineItems }),
+    body: JSON.stringify({ line_items: lineItems }),
   });
 
   if (!response.ok) {

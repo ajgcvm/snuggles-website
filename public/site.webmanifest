@@ -1,0 +1,16 @@
+{
+  "name": "Snuggles Pet Boarding",
+  "short_name": "Snuggles",
+  "description": "Farm-style pet boarding in Melbourne, FL. Dogs, cats, and birds welcome.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf7f5",
+  "theme_color": "#7c9a70",
+  "icons": [
+    {
+      "src": "/images/logo-expanded.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -1433,7 +1433,7 @@ function BookingDetail({ booking, onUpdateStatus, authHeader, onRefresh }: Booki
 
     try {
       const items: PaymentLineItem[] = lineItems.map(item => ({
-        price: item.priceId,
+        price_id: item.priceId,
         quantity: item.quantity,
       }));
 
