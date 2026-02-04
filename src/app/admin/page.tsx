@@ -627,7 +627,7 @@ function BookingsSection({
                             return <span className="text-xs px-2 py-1 rounded-full font-medium bg-amber-100 text-amber-700">Awaiting</span>;
                           }
                           if (isNotConfigured) {
-                            return <span className="text-xs text-stone-400">—</span>;
+                            return <span className="text-xs px-2 py-1 rounded-full font-medium bg-stone-100 text-stone-500">Not Configured</span>;
                           }
                           return <span className="text-xs px-2 py-1 rounded-full font-medium bg-stone-100 text-stone-600">{booking.payment_status}</span>;
                         })()}
