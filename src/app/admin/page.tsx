@@ -606,23 +606,31 @@ function BookingsSection({
                         <StatusBadge status={booking.status} />
                       </td>
                       <td className="px-4 py-3">
-                        {booking.payment_status ? (
-                          <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                            booking.payment_status === 'paid' ? 'bg-green-100 text-green-700' :
-                            booking.payment_status === 'payment_expired' ? 'bg-red-100 text-red-700' :
-                            booking.payment_status === 'pending_payment' ? 'bg-amber-100 text-amber-700' :
-                            booking.payment_status === 'refunded' ? 'bg-purple-100 text-purple-700' :
-                            'bg-stone-100 text-stone-600'
-                          }`}>
-                            {booking.payment_status === 'paid' ? 'Paid' :
-                             booking.payment_status === 'payment_expired' ? 'Expired' :
-                             booking.payment_status === 'pending_payment' ? 'Pending' :
-                             booking.payment_status === 'refunded' ? 'Refunded' :
-                             booking.payment_status}
-                          </span>
-                        ) : (
-                          <span className="text-xs text-stone-400">—</span>
-                        )}
+                        {(() => {
+                          // Determine payment display status
+                          const isPaid = booking.payment_status === 'paid';
+                          const isExpired = booking.payment_status === 'payment_expired';
+                          const isRefunded = booking.payment_status === 'refunded';
+                          const isAwaitingPayment = booking.payment_status === 'pending_payment' && booking.payment_link;
+                          const isNotConfigured = !booking.payment_status || (booking.payment_status === 'pending_payment' && !booking.payment_link);
+
+                          if (isPaid) {
+                            return <span className="text-xs px-2 py-1 rounded-full font-medium bg-green-100 text-green-700">Paid</span>;
+                          }
+                          if (isExpired) {
+                            return <span className="text-xs px-2 py-1 rounded-full font-medium bg-red-100 text-red-700">Expired</span>;
+                          }
+                          if (isRefunded) {
+                            return <span className="text-xs px-2 py-1 rounded-full font-medium bg-purple-100 text-purple-700">Refunded</span>;
+                          }
+                          if (isAwaitingPayment) {
+                            return <span className="text-xs px-2 py-1 rounded-full font-medium bg-amber-100 text-amber-700">Awaiting</span>;
+                          }
+                          if (isNotConfigured) {
+                            return <span className="text-xs text-stone-400">—</span>;
+                          }
+                          return <span className="text-xs px-2 py-1 rounded-full font-medium bg-stone-100 text-stone-600">{booking.payment_status}</span>;
+                        })()}
                       </td>
                       <td className="px-4 py-3">
                         <button
